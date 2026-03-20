@@ -6343,16 +6343,13 @@ window.DiceGameApp = (function() {
     await loadPDF();
     var page = await pdfDoc.getPage(idx+1);
     var dpr = window.devicePixelRatio || 1;
-    var containerWidth = (canvas.parentElement ? canvas.parentElement.clientWidth : window.innerWidth) || window.innerWidth;
-    var baseVp = page.getViewport({scale:1});
-    var scale = containerWidth / baseVp.width;
-    var vp = page.getViewport({scale:scale});
+    var baseScale = 1.5;
+    var vp = page.getViewport({scale: baseScale});
     canvas.width = vp.width * dpr;
     canvas.height = vp.height * dpr;
     canvas.style.width = vp.width + 'px';
     canvas.style.height = vp.height + 'px';
-    ctx.scale(dpr, dpr);
-    await page.render({canvasContext:ctx, viewport:vp}).promise;
+    await page.render({canvasContext: ctx, viewport: vp, transform: [dpr, 0, 0, dpr, 0, 0]}).promise;
     loading.style.display='none';
     canvas.style.display='block';
   }
