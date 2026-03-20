@@ -6345,11 +6345,13 @@ window.DiceGameApp = (function() {
     var dpr = window.devicePixelRatio || 1;
     var containerWidth = (canvas.parentElement ? canvas.parentElement.clientWidth : window.innerWidth) || window.innerWidth;
     var baseVp = page.getViewport({scale:1});
-    var scale = (containerWidth / baseVp.width) * dpr;
+    var scale = containerWidth / baseVp.width;
     var vp = page.getViewport({scale:scale});
-    canvas.width=vp.width; canvas.height=vp.height;
-    canvas.style.width = containerWidth + 'px';
-    canvas.style.height = (vp.height / dpr) + 'px';
+    canvas.width = vp.width * dpr;
+    canvas.height = vp.height * dpr;
+    canvas.style.width = vp.width + 'px';
+    canvas.style.height = vp.height + 'px';
+    ctx.scale(dpr, dpr);
     await page.render({canvasContext:ctx, viewport:vp}).promise;
     loading.style.display='none';
     canvas.style.display='block';
@@ -6587,8 +6589,7 @@ function openPositionsBook() {
   var overlay = document.getElementById('positions-book-overlay');
   document.body.dataset.scrollY = scrollY;
   document.body.style.top = '-' + scrollY + 'px';
-  overlay.style.visibility = '';
-  overlay.style.pointerEvents = '';
+  overlay.style.display = '';
   overlay.classList.add('active');
   document.body.classList.add('positions-open');
   document.body.style.position = 'fixed';
@@ -6601,8 +6602,7 @@ function openPositionsBook() {
 function closePositionsBook() {
   var scrollY = parseInt(document.body.dataset.scrollY || '0');
   var overlay = document.getElementById('positions-book-overlay');
-  overlay.style.visibility = 'hidden';
-  overlay.style.pointerEvents = 'none';
+  overlay.style.display = 'none';
   overlay.classList.remove('active');
   document.body.classList.remove('positions-open');
   document.body.style.position = '';
