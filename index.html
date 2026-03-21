@@ -6349,9 +6349,12 @@ window.DiceGameApp = (function() {
     var scale = (containerWidth / baseVp.width) * dpr;
     var vp = page.getViewport({scale:scale});
     canvas.width=vp.width; canvas.height=vp.height;
+    var fullHeight = vp.height / dpr;
     canvas.style.width = containerWidth + 'px';
-    canvas.style.height = (vp.height / dpr) + 'px';
+    canvas.style.height = fullHeight + 'px';
     await page.render({canvasContext:ctx, viewport:vp}).promise;
+    // Show only the image portion (top 72%) — hides garbled text from PDF
+    canvas.style.height = Math.floor(fullHeight * 0.72) + 'px';
     loading.style.display='none';
     canvas.style.display='block';
   }
