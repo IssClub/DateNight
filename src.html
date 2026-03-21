@@ -336,7 +336,7 @@ body.positions-open #positions-book-overlay {
   </style>
 
   <!-- pdf.js for Positions Book -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.js"></script>
 </head>
 <body>
   <div id="root"></div>
@@ -6330,6 +6330,7 @@ window.DiceGameApp = (function() {
   function getAvailable(){ var d=getHistory(); return POSES_DATA.filter(function(p){ return !d[p.num]; }); }
 
   /* ── PDF ───────────────────────────────────────────────────────── */
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.worker.min.js';
   async function loadPDF(){
     if(pdfDoc) return;
     pdfDoc = await pdfjsLib.getDocument({url:'./positions.pdf'}).promise;
@@ -6345,14 +6346,14 @@ window.DiceGameApp = (function() {
     await loadPDF();
     var page = await pdfDoc.getPage(idx+1);
     var dpr = window.devicePixelRatio || 1;
-    var baseScale = 1.5;
-    var scale = baseScale * dpr;
-    var vp = page.getViewport({scale: scale});
-    canvas.width = vp.width;
-    canvas.height = vp.height;
-    canvas.style.width = (vp.width / dpr) + 'px';
+    var containerWidth = (canvas.parentElement ? canvas.parentElement.clientWidth : window.innerWidth) || window.innerWidth;
+    var baseVp = page.getViewport({scale:1});
+    var scale = (containerWidth / baseVp.width) * dpr;
+    var vp = page.getViewport({scale:scale});
+    canvas.width=vp.width; canvas.height=vp.height;
+    canvas.style.width = containerWidth + 'px';
     canvas.style.height = (vp.height / dpr) + 'px';
-    await page.render({canvasContext: ctx, viewport: vp}).promise;
+    await page.render({canvasContext:ctx, viewport:vp}).promise;
     loading.style.display='none';
     canvas.style.display='block';
   }
