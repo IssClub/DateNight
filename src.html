@@ -2359,6 +2359,7 @@ function DateNight() {
     if (pwd === "SexyNight") {
       setShowPasswordModal(false);
       setPasswordError(false);
+      if (passwordTarget === "adults") setSkippedCat(true);
       setSelectedSubcat(passwordTarget);
       setGenreFilter(null);
       setView("subcat");
@@ -2392,7 +2393,8 @@ function DateNight() {
       }
     } else if (view === "subcat") {
       setSelectedSubcat(null);
-      if (skippedCat) {
+      const subcats = SUBCAT_CONFIG[selectedCat];
+      if (skippedCat || !subcats || subcats.length <= 1) {
         setSkippedCat(false);
         setSelectedCat(null);
         setView("home");
