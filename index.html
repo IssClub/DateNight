@@ -2283,6 +2283,17 @@ function DateNight() {
     setSelectedSubcat(null);
     setSelectedItem(null);
     setGenreFilter(null);
+    if (cat.subcats && cat.subcats.length === 1) {
+      const sub = cat.subcats[0];
+      if (sub === "adults") {
+        setPasswordTarget(sub);
+        setShowPasswordModal(true);
+      } else {
+        setSelectedSubcat(sub);
+        setView("subcat");
+      }
+      return;
+    }
     setView("category");
   };
   const goSubcat = sub => {
@@ -2332,7 +2343,13 @@ function DateNight() {
       }
     } else if (view === "subcat") {
       setSelectedSubcat(null);
-      setView("category");
+      if (selectedCat && selectedCat.subcats && selectedCat.subcats.length === 1) {
+        setSelectedCat(null);
+        setView("home");
+        setTab("home");
+      } else {
+        setView("category");
+      }
     } else {
       setView("home");
       setTab("home");
@@ -6002,7 +6019,7 @@ function ItemCard({
 }) {
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgErr, setImgErr] = useState(false);
-  const unsplashUrl = !MOVIE_POSTERS[item.id] ? getUnsplashUrl(item, 400, 200) : null;
+  const imgSrc = item.photo || MOVIE_POSTERS[item.id] || getUnsplashUrl(item, 400, 200);
   return /*#__PURE__*/React.createElement("div", {
     onClick: onClick,
     style: {
@@ -6034,8 +6051,8 @@ function ItemCard({
       opacity: imgLoaded && !imgErr ? 0 : 1,
       transition: "opacity 0.4s"
     }
-  }, item.emoji)), unsplashUrl && !imgErr && /*#__PURE__*/React.createElement("img", {
-    src: unsplashUrl,
+  }, item.emoji)), imgSrc && !imgErr && /*#__PURE__*/React.createElement("img", {
+    src: imgSrc,
     alt: item.name,
     style: {
       position: "absolute",
