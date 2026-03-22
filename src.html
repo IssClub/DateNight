@@ -2213,6 +2213,33 @@ function SplashWithPin({
     }
   }, "\u05E7\u05D5\u05D3 \u05E9\u05D2\u05D5\u05D9, \u05E0\u05E1\u05D5 \u05E9\u05D5\u05D1")));
 }
+async function biometricAvailable() {
+  try {
+    return !!(window.PublicKeyCredential &&
+      await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable());
+  } catch { return false; }
+}
+async function registerBiometric() {
+  const cred = await navigator.credentials.create({ publicKey: {
+    challenge: crypto.getRandomValues(new Uint8Array(32)),
+    rp: { name: "DateNight", id: location.hostname },
+    user: { id: crypto.getRandomValues(new Uint8Array(16)), name: "user", displayName: "DateNight" },
+    pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
+    authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
+    timeout: 60000
+  }});
+  localStorage.setItem("dn_bio_id", JSON.stringify(Array.from(new Uint8Array(cred.rawId))));
+}
+async function authenticateBiometric() {
+  const stored = localStorage.getItem("dn_bio_id");
+  if (!stored) throw new Error("no-cred");
+  await navigator.credentials.get({ publicKey: {
+    challenge: crypto.getRandomValues(new Uint8Array(32)),
+    allowCredentials: [{ type: "public-key", id: new Uint8Array(JSON.parse(stored)) }],
+    userVerification: "required",
+    timeout: 60000
+  }});
+}
 function DateNight() {
   const [view, setView] = useState("home");
   const [tab, setTab] = useState("home"); // bottom nav: home | history | favorites
@@ -2280,6 +2307,22 @@ function DateNight() {
     setSelectedItem(null);
     setGenreFilter(null);
   };
+  const tryBiometricAuth = async () => {
+    try {
+      if (!(await biometricAvailable())) throw new Error("unavailable");
+      const stored = localStorage.getItem("dn_bio_id");
+      if (stored) {
+        await authenticateBiometric();
+      } else {
+        await registerBiometric();
+      }
+      setSelectedSubcat("adults");
+      setView("subcat");
+    } catch {
+      setPasswordTarget("adults");
+      setShowPasswordModal(true);
+    }
+  };
   const goCat = cat => {
     setSelectedCat(cat);
     setSelectedSubcat(null);
@@ -2289,8 +2332,7 @@ function DateNight() {
     if (subcats && subcats.length === 1) {
       const sub = subcats[0].id;
       if (sub === "adults") {
-        setPasswordTarget(sub);
-        setShowPasswordModal(true);
+        tryBiometricAuth();
       } else {
         setSelectedSubcat(sub);
         setView("subcat");
