@@ -2276,6 +2276,7 @@ function DateNight() {
     }
   });
   const [genreFilter, setGenreFilter] = useState(null);
+  const [skippedCat, setSkippedCat] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   // Apply dark mode to body for CSS vars
   useEffect(() => {
@@ -2338,6 +2339,7 @@ function DateNight() {
       } else {
         await registerBiometric();
       }
+      setSkippedCat(true);
       setSelectedSubcat("adults");
       setView("subcat");
     } catch {
@@ -2356,11 +2358,13 @@ function DateNight() {
       if (sub === "adults") {
         tryBiometricAuth();
       } else {
+        setSkippedCat(true);
         setSelectedSubcat(sub);
         setView("subcat");
       }
       return;
     }
+    setSkippedCat(false);
     setView("category");
   };
   const goSubcat = sub => {
@@ -2410,13 +2414,13 @@ function DateNight() {
       }
     } else if (view === "subcat") {
       setSelectedSubcat(null);
-      const subcats = SUBCAT_CONFIG[selectedCat];
-      if (subcats && subcats.length > 1) {
-        setView("category");
-      } else {
+      if (skippedCat) {
+        setSkippedCat(false);
         setSelectedCat(null);
         setView("home");
         setTab("home");
+      } else {
+        setView("category");
       }
     } else {
       setView("home");
