@@ -2347,12 +2347,12 @@ function DateNight() {
     } else if (view === "subcat") {
       setSelectedSubcat(null);
       const subcats = SUBCAT_CONFIG[selectedCat];
-      if (subcats && subcats.length === 1) {
+      if (subcats && subcats.length > 1) {
+        setView("category");
+      } else {
         setSelectedCat(null);
         setView("home");
         setTab("home");
-      } else {
-        setView("category");
       }
     } else {
       setView("home");
