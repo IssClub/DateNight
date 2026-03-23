@@ -6523,6 +6523,9 @@ function SettingsScreen({
   const [histMsg, setHistMsg] = useState("");
   const [appLock, setAppLock] = useState(() => localStorage.getItem("dn_app_lock") === "1");
   const [showPwdForm, setShowPwdForm] = useState(false);
+  const [privacyUnlocked, setPrivacyUnlocked] = useState(false);
+  const [privacyInput, setPrivacyInput] = useState("");
+  const [privacyMsg, setPrivacyMsg] = useState("");
   const sectionHeader = label => React.createElement("div", {
     style: {
       fontSize: 11,
@@ -6661,10 +6664,23 @@ function SettingsScreen({
     }
   };
 
-  // Change password
+  // Unlock privacy section with current password
+  const handlePrivacyUnlock = () => {
+    const correct = localStorage.getItem("dn_password") || "SexyNight";
+    if (privacyInput === correct) {
+      setPrivacyUnlocked(true);
+      setPrivacyInput("");
+      setPrivacyMsg("");
+    } else {
+      setPrivacyMsg("סיסמה שגויה");
+      setTimeout(() => setPrivacyMsg(""), 2500);
+    }
+  };
+
+  // Change password (only available after privacy unlock)
   const handleSavePwd = () => {
     if (!pwdInput.trim()) {
-      setPwdMsg("הכנס סיסמה");
+      setPwdMsg("הכנס סיסמה חדשה");
       return;
     }
     localStorage.setItem("dn_password", pwdInput.trim());
@@ -6674,7 +6690,7 @@ function SettingsScreen({
     setTimeout(() => setPwdMsg(""), 3000);
   };
 
-  // Reset Face ID
+  // Reset Face ID (only available after privacy unlock)
   const handleResetFaceId = () => {
     localStorage.removeItem("dn_bio_id");
     setFaceMsg("Face ID אופס ✓");
@@ -6758,7 +6774,61 @@ function SettingsScreen({
     style: {
       background: T.card
     }
-  }, row(React.createElement(React.Fragment, null, rowLabel("שינוי סיסמת 18+", pwdMsg || "סיסמה לכניסה לאזור המבוגרים"), actionBtn(showPwdForm ? "ביטול" : "שנה", () => {
+  }, !privacyUnlocked ? React.createElement(React.Fragment, null, row(React.createElement(React.Fragment, null, rowLabel("אזור מוגן", "הכנס סיסמה לפתיחת הגדרות פרטיות"), React.createElement("span", {
+    style: {
+      fontSize: 20
+    }
+  }, "🔒"))), row(React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 8,
+      width: "100%",
+      alignItems: "center"
+    }
+  }, React.createElement("input", {
+    type: "password",
+    placeholder: "סיסמה נוכחית",
+    value: privacyInput,
+    onChange: e => setPrivacyInput(e.target.value),
+    onKeyDown: e => e.key === "Enter" && handlePrivacyUnlock(),
+    style: {
+      flex: 1,
+      padding: "10px 14px",
+      borderRadius: 10,
+      border: `1.5px solid ${privacyMsg ? "#c0392b" : T.border}`,
+      fontSize: 16,
+      background: T.cream,
+      color: T.text,
+      fontFamily: FONT_SANS,
+      outline: "none",
+      direction: "ltr"
+    }
+  }), React.createElement("button", {
+    onClick: handlePrivacyUnlock,
+    style: {
+      background: T.gold,
+      color: "white",
+      border: "none",
+      borderRadius: 10,
+      padding: "10px 16px",
+      fontSize: 14,
+      fontWeight: 700,
+      cursor: "pointer",
+      fontFamily: FONT_SANS
+    }
+  }, "פתח")), {
+    style: {
+      background: T.card,
+      padding: "10px 18px",
+      borderBottom: `1px solid ${T.border}`
+    }
+  }), privacyMsg ? row(React.createElement("span", {
+    style: {
+      color: "#c0392b",
+      fontSize: 13,
+      fontFamily: FONT_SANS
+    }
+  }, privacyMsg)) : null) : React.createElement(React.Fragment, null, row(React.createElement(React.Fragment, null, rowLabel("שינוי סיסמת 18+", pwdMsg || "הגדר סיסמה חדשה לאזור המבוגרים"), actionBtn(showPwdForm ? "ביטול" : "שנה", () => {
     setShowPwdForm(f => !f);
     setPwdMsg("");
   }))), showPwdForm ? row(React.createElement("div", {
@@ -6805,7 +6875,10 @@ function SettingsScreen({
       padding: "10px 18px",
       borderBottom: `1px solid ${T.border}`
     }
-  }) : null, row(React.createElement(React.Fragment, null, rowLabel("איפוס Face ID", faceMsg || "מחיקת הרשאת ביומטרי"), actionBtn("אפס", handleResetFaceId, true)))),
+  }) : null, row(React.createElement(React.Fragment, null, rowLabel("איפוס Face ID", faceMsg || "מחיקת הרשאת ביומטרי"), actionBtn("אפס", handleResetFaceId, true))), row(React.createElement(React.Fragment, null, rowLabel("נעל מחדש", "נעל את הגדרות הפרטיות"), actionBtn("🔒 נעל", () => {
+    setPrivacyUnlocked(false);
+    setShowPwdForm(false);
+  }))))),
   // ── Section: נעילה ──
   sectionHeader("נעילה 🔒"), React.createElement("div", {
     style: {
