@@ -2306,6 +2306,7 @@ function DateNight() {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordTarget, setPasswordTarget] = useState(null);
   const [passwordError, setPasswordError] = useState(false);
+  const [showBioOffer, setShowBioOffer] = useState(false);
   const [pendingRating, setPendingRating] = useState(null); // דייט שמחכה לדירוג
 
   // בדיקת דייטים שעברו ומחכים לדירוג - מופעל אחרי שה-splash נגמר
@@ -2344,21 +2345,18 @@ function DateNight() {
     setGenreFilter(null);
   };
   const tryBiometricAuth = async () => {
-    try {
-      if (!(await biometricAvailable())) throw new Error("unavailable");
-      const stored = localStorage.getItem("dn_bio_id");
-      if (stored) {
+    if (localStorage.getItem("dn_bio_id")) {
+      try {
+        if (!(await biometricAvailable())) throw new Error();
         await authenticateBiometric();
-      } else {
-        await registerBiometric();
-      }
-      setSkippedCat(true);
-      setSelectedSubcat("adults");
-      setView("subcat");
-    } catch {
-      setPasswordTarget("adults");
-      setShowPasswordModal(true);
+        setSkippedCat(true);
+        setSelectedSubcat("adults");
+        setView("subcat");
+        return;
+      } catch {}
     }
+    setPasswordTarget("adults");
+    setShowPasswordModal(true);
   };
   const goCat = cat => {
     setSelectedCat(cat);
@@ -2390,7 +2388,7 @@ function DateNight() {
     setGenreFilter(null);
     setView("subcat");
   };
-  const handlePasswordSubmit = pwd => {
+  const handlePasswordSubmit = async pwd => {
     if (pwd === "SexyNight") {
       setShowPasswordModal(false);
       setPasswordError(false);
@@ -2398,9 +2396,18 @@ function DateNight() {
       setSelectedSubcat(passwordTarget);
       setGenreFilter(null);
       setView("subcat");
+      if (!localStorage.getItem("dn_bio_id") && (await biometricAvailable())) {
+        setShowBioOffer(true);
+      }
     } else {
       setPasswordError(true);
     }
+  };
+  const activateFaceId = async () => {
+    setShowBioOffer(false);
+    try {
+      await registerBiometric();
+    } catch {}
   };
   const goItem = item => {
     setSelectedItem(item);
@@ -2500,7 +2507,57 @@ function DateNight() {
       direction: "rtl",
       transition: "background 0.3s"
     }
-  }, showPasswordModal && /*#__PURE__*/React.createElement(PasswordModal, {
+  }, showBioOffer && /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: "fixed",
+      bottom: 0,
+      left: 0,
+      right: 0,
+      zIndex: 9999,
+      background: "#1a1520",
+      borderTop: "1px solid rgba(201,168,76,0.3)",
+      padding: "16px 20px calc(16px + env(safe-area-inset-bottom,0px))",
+      direction: "rtl"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: "#e8d48f",
+      fontSize: 14,
+      marginBottom: 12,
+      textAlign: "right"
+    }
+  }, "👋 רוצה להפעיל Face ID לכניסה מהירה בפעם הבאה?"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: activateFaceId,
+    style: {
+      flex: 1,
+      background: "rgba(201,168,76,0.15)",
+      border: "1px solid rgba(201,168,76,0.4)",
+      borderRadius: 10,
+      padding: "10px",
+      color: "#e8d48f",
+      cursor: "pointer",
+      fontFamily: "DM Sans",
+      fontSize: 14
+    }
+  }, "✅ כן, הפעל"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowBioOffer(false),
+    style: {
+      flex: 1,
+      background: "rgba(255,255,255,0.05)",
+      border: "1px solid rgba(255,255,255,0.1)",
+      borderRadius: 10,
+      padding: "10px",
+      color: "rgba(255,255,255,0.45)",
+      cursor: "pointer",
+      fontFamily: "DM Sans",
+      fontSize: 14
+    }
+  }, "לא תודה"))), showPasswordModal && /*#__PURE__*/React.createElement(PasswordModal, {
     onSubmit: handlePasswordSubmit,
     onClose: () => {
       setShowPasswordModal(false);
@@ -6430,13 +6487,23 @@ async function loadPosesData(){
   POSES_DATA = await r.json();
 }
 var GIF_FILES = null;
+var GIF_SHUFFLE = null;
+var GIF_IDX = 0;
 async function loadGifFiles(){
   if(GIF_FILES) return;
   var r = await fetch('./gifs.json');
   GIF_FILES = await r.json();
 }
+function pickGif(){
+  if(!GIF_FILES||!GIF_FILES.length) return null;
+  if(!GIF_SHUFFLE||GIF_IDX>=GIF_SHUFFLE.length){
+    GIF_SHUFFLE=[...GIF_FILES].sort(()=>Math.random()-0.5);
+    GIF_IDX=0;
+  }
+  return GIF_SHUFFLE[GIF_IDX++];
+}
 
-var DICE_HTML_TEMPLATE = "\n<div class=\"bg-ambiance\"></div>\n<div id=\"dg-main\">\n  <div class=\"header\">\n    <div class=\"header-subtitle\">\u05e2\u05e8\u05d1 \u05d0\u05d9\u05e0\u05d8\u05d9\u05de\u05d9 \u2728</div>\n    <div class=\"header-title\">365 Positions</div>\n  </div>\n  <div class=\"counter-wrap\">\n    <div class=\"counter-pill\">\u2705 <span class=\"num\" id=\"dg-done\">0</span> / 365 \u05d1\u05d5\u05e6\u05e2\u05d5</div>\n    <button class=\"btn-history\" onclick=\"DiceGameApp.openHistory()\">\ud83d\udccb \u05d4\u05d9\u05e1\u05d8\u05d5\u05e8\u05d9\u05d4</button>\n  </div>\n  <div class=\"dice-scene\" onclick=\"DiceGameApp.rollDice()\">\n    <div class=\"dice-wrap\" id=\"dg-dice\">\n      <div class=\"dice-face face-front\"><span class=\"face-icon\">\ud83d\udc8b</span></div>\n      <div class=\"dice-face face-back\"><span class=\"face-icon\">\ud83d\udd25</span></div>\n      <div class=\"dice-face face-right\"><span class=\"face-icon\">\ud83d\udc97</span></div>\n      <div class=\"dice-face face-left\"><span class=\"face-icon\">\u2728</span></div>\n      <div class=\"dice-face face-top\"><span class=\"face-icon\">\ud83c\udf19</span></div>\n      <div class=\"dice-face face-bottom\"><span class=\"face-icon\">\ud83d\udc98</span></div>\n    </div>\n    <div class=\"dice-glow\"></div>\n  </div>\n  <button class=\"btn-roll\" id=\"dg-btn-roll\" onclick=\"DiceGameApp.rollDice()\">\ud83c\udfb2 \u05d2\u05dc\u05d2\u05dc \u05ea\u05e0\u05d5\u05d7\u05d4!</button>\n  <div class=\"remaining-badge\">\n    <span class=\"dot\"></span>\n    <span id=\"dg-remaining\">365 \u05ea\u05e0\u05d5\u05d7\u05d5\u05ea \u05d6\u05de\u05d9\u05e0\u05d5\u05ea</span>\n  </div>\n  <div class=\"pose-picker\">\n    <input type=\"number\" id=\"dg-picker\" min=\"1\" max=\"365\" placeholder=\"#\" onkeydown=\"if(event.key==='Enter')DiceGameApp.goToPose()\" />\n    <button class=\"pose-picker-btn\" onclick=\"DiceGameApp.goToPose()\">\u05d1\u05d7\u05e8</button>\n  </div>\n  <button class=\"btn-ending-night\" onclick=\"DiceGameApp.rollEnding()\">🔮 איך זה ייגמר הלילה? 💦</button>\n  <button class=\"btn-back-datenight\" onclick=\"closePositionsBook()\">\u2190 \u05d7\u05d6\u05e8\u05d4 \u05dc-DateNight</button>\n</div>\n\n<div id=\"dg-pose-overlay\">\n  <div class=\"pose-modal\">\n    <div class=\"pose-img-wrap\">\n      <img id=\"dg-pose-img\" src=\"\" alt=\"\" style=\"width:100%;display:block;object-fit:cover\" />\n      <div class=\"pose-num-badge\" id=\"dg-num-badge\">#1</div>\n      <button class=\"btn-close-modal\" onclick=\"DiceGameApp.closeModal()\">\u2715</button>\n      <button class=\"btn-nav-pose btn-nav-prev\" onclick=\"DiceGameApp.navPose(-1)\">\u276e</button>\n      <button class=\"btn-nav-pose btn-nav-next\" onclick=\"DiceGameApp.navPose(1)\">\u276f</button>\n    </div>\n    <div class=\"pose-info\">\n      <div class=\"pose-name\" id=\"dg-pose-name\"></div>\n      <div class=\"desc-row\">\n        <button class=\"btn-gif-pose\" onclick=\"DiceGameApp.rollEnding()\">💦</button>\n        <div id=\"dg-desc\" class=\"pose-desc\"></div>\n      </div>\n      <div class=\"diff-wrap\">\n        <span class=\"diff-label\">\u05e8\u05de\u05ea \u05e7\u05d5\u05e9\u05d9</span>\n        <div class=\"diff-dots\" id=\"dg-diff-dots\">\n          <span class=\"diff-dot\" data-i=\"1\"></span>\n          <span class=\"diff-dot\" data-i=\"2\"></span>\n          <span class=\"diff-dot\" data-i=\"3\"></span>\n          <span class=\"diff-dot\" data-i=\"4\"></span>\n          <span class=\"diff-dot\" data-i=\"5\"></span>\n        </div>\n      </div>\n      <div id=\"dg-card-male\" class=\"pose-card male\" style=\"display:none\">\n        <div class=\"pose-card-title\">\u05d9\u05ea\u05e8\u05d5\u05e0\u05d5\u05ea \u05dc\u05d2\u05d1\u05e8 <span>\u2642\ufe0f</span></div>\n        <div class=\"pose-card-body\" id=\"dg-male-body\"></div>\n      </div>\n      <div id=\"dg-card-female\" class=\"pose-card\" style=\"display:none\">\n        <div class=\"pose-card-title\">\u05d9\u05ea\u05e8\u05d5\u05e0\u05d5\u05ea \u05dc\u05d0\u05d9\u05e9\u05d4 <span>\u2640\ufe0f</span></div>\n        <div class=\"pose-card-body\" id=\"dg-female-body\"></div>\n      </div>\n      <div id=\"dg-card-tip\" class=\"pose-card tip\" style=\"display:none\">\n        <div class=\"pose-card-title\">\u05d8\u05d9\u05e4 \u05dc\u05d5\u05d4\u05d8 <span>\ud83d\udd25</span></div>\n        <div class=\"pose-card-body\" id=\"dg-tip-body\"></div>\n      </div>\n    </div>\n    <div class=\"rating-section\">\n      <div class=\"section-label\">\u2b50 \u05d3\u05e8\u05d2\u05d5 \u05d0\u05ea \u05d4\u05ea\u05e0\u05d5\u05d7\u05d4</div>\n      <div class=\"stars-row\" id=\"dg-stars\">\n        <button class=\"star-btn\" data-val=\"1\">\u2b50</button>\n        <button class=\"star-btn\" data-val=\"2\">\u2b50</button>\n        <button class=\"star-btn\" data-val=\"3\">\u2b50</button>\n        <button class=\"star-btn\" data-val=\"4\">\u2b50</button>\n        <button class=\"star-btn\" data-val=\"5\">\u2b50</button>\n      </div>\n      <textarea class=\"notes-input\" id=\"dg-notes\" placeholder=\"\u05d4\u05d5\u05e1\u05d9\u05e4\u05d5 \u05d4\u05e2\u05e8\u05d4 (\u05d0\u05d5\u05e4\u05e6\u05d9\u05d5\u05e0\u05dc\u05d9)...\"></textarea>\n      <div class=\"section-label\" style=\"margin-top:14px\">\ud83d\udd01 \u05dc\u05e0\u05e1\u05d5\u05ea \u05e9\u05d5\u05d1?</div>\n      <div class=\"try-again-row\">\n        <button class=\"toggle-btn\" id=\"dg-btn-yes\" onclick=\"DiceGameApp.setTryAgain(true)\">\ud83d\udc96 \u05e0\u05e0\u05e1\u05d4 \u05e9\u05d5\u05d1!</button>\n        <button class=\"toggle-btn\" id=\"dg-btn-no\" onclick=\"DiceGameApp.setTryAgain(false)\">\u2717 \u05dc\u05d0 \u05de\u05de\u05e9</button>\n      </div>\n    </div>\n    <div class=\"save-section\">\n      <button class=\"btn-save\" id=\"dg-btn-save\" disabled onclick=\"DiceGameApp.savePose()\">\ud83d\udcbe \u05e9\u05de\u05d5\u05e8 \u05d5\u05e2\u05d1\u05d5\u05e8 \u05d4\u05dc\u05d0\u05d4</button>\n      <button class=\"btn-skip\" onclick=\"DiceGameApp.skipPose()\">\ud83c\udfb2 \u05ea\u05e0\u05d5\u05d7\u05d4 \u05d0\u05d7\u05e8\u05ea</button>\n      <button class=\"btn-skip\" onclick=\"DiceGameApp.closeModal()\" style=\"margin-top:4px;border-color:rgba(201,168,76,0.4);color:var(--gold)\">\ud83c\udfe0 \u05d7\u05d6\u05e8\u05d4 \u05dc\u05d3\u05e3 \u05d4\u05e8\u05d0\u05e9\u05d9</button>\n    </div>\n  </div>\n</div>\n\n<div id=\"dg-history-overlay\">\n  <div class=\"history-modal\">\n    <div class=\"history-header\">\n      <div class=\"history-title\">\ud83d\udccb \u05d4\u05d9\u05e1\u05d8\u05d5\u05e8\u05d9\u05d4</div>\n      <button class=\"btn-close-history\" onclick=\"DiceGameApp.closeHistory()\">\u2715</button>\n    </div>\n    <div id=\"dg-history-content\"></div>\n  </div>\n</div>\n\n<div id=\"dg-ending-overlay\">\n  <div id=\"dg-ending-media\"></div>\n  <button class=\"btn-confirm-ending\" onclick=\"DiceGameApp.closeEnding()\">✅</button>\n</div>\n\n<div id=\"dg-finish\">\n  <div class=\"finish-emoji\">\ud83c\udfc6</div>\n  <div class=\"finish-title\">\u05e2\u05e9\u05d9\u05ea\u05dd \u05d0\u05ea \u05db\u05d5\u05dc\u05df!</div>\n  <div class=\"finish-sub\">\u05db\u05dc 365 \u05d4\u05ea\u05e0\u05d5\u05d7\u05d5\u05ea \u05d1\u05d5\u05e6\u05e2\u05d5.<br>\u05de\u05d3\u05d4\u05d9\u05dd! \u05d0\u05ea\u05dd \u05de\u05e7\u05e6\u05d5\u05e2\u05d9\u05d9\u05dd \u05d0\u05de\u05d9\u05ea\u05d9\u05d9\u05dd \ud83d\udd25</div>\n  <button class=\"btn-reset\" onclick=\"DiceGameApp.resetAll()\">\ud83d\udd04 \u05d4\u05ea\u05d7\u05dc \u05de\u05d7\u05d3\u05e9</button>\n</div>\n";
+var DICE_HTML_TEMPLATE = "\n<div class=\"bg-ambiance\"></div>\n<div id=\"dg-main\">\n  <div class=\"header\">\n    <div class=\"header-subtitle\">\u05e2\u05e8\u05d1 \u05d0\u05d9\u05e0\u05d8\u05d9\u05de\u05d9 \u2728</div>\n    <div class=\"header-title\">365 Positions</div>\n  </div>\n  <div class=\"counter-wrap\">\n    <div class=\"counter-pill\">\u2705 <span class=\"num\" id=\"dg-done\">0</span> / 365 \u05d1\u05d5\u05e6\u05e2\u05d5</div>\n    <button class=\"btn-history\" onclick=\"DiceGameApp.openHistory()\">\ud83d\udccb \u05d4\u05d9\u05e1\u05d8\u05d5\u05e8\u05d9\u05d4</button>\n  </div>\n  <div class=\"dice-scene\" onclick=\"DiceGameApp.rollDice()\">\n    <div class=\"dice-wrap\" id=\"dg-dice\">\n      <div class=\"dice-face face-front\"><span class=\"face-icon\">\ud83d\udc8b</span></div>\n      <div class=\"dice-face face-back\"><span class=\"face-icon\">\ud83d\udd25</span></div>\n      <div class=\"dice-face face-right\"><span class=\"face-icon\">\ud83d\udc97</span></div>\n      <div class=\"dice-face face-left\"><span class=\"face-icon\">\u2728</span></div>\n      <div class=\"dice-face face-top\"><span class=\"face-icon\">\ud83c\udf19</span></div>\n      <div class=\"dice-face face-bottom\"><span class=\"face-icon\">\ud83d\udc98</span></div>\n    </div>\n    <div class=\"dice-glow\"></div>\n  </div>\n  <button class=\"btn-roll\" id=\"dg-btn-roll\" onclick=\"DiceGameApp.rollDice()\">\ud83c\udfb2 \u05d2\u05dc\u05d2\u05dc \u05ea\u05e0\u05d5\u05d7\u05d4!</button>\n  <div class=\"remaining-badge\">\n    <span class=\"dot\"></span>\n    <span id=\"dg-remaining\">365 \u05ea\u05e0\u05d5\u05d7\u05d5\u05ea \u05d6\u05de\u05d9\u05e0\u05d5\u05ea</span>\n  </div>\n  <div class=\"pose-picker\">\n    <input type=\"number\" id=\"dg-picker\" min=\"1\" max=\"365\" placeholder=\"#\" onkeydown=\"if(event.key==='Enter')DiceGameApp.goToPose()\" />\n    <button class=\"pose-picker-btn\" onclick=\"DiceGameApp.goToPose()\">\u05d1\u05d7\u05e8</button>\n  </div>\n  <button class=\"btn-ending-night\" onclick=\"DiceGameApp.rollEnding()\">🔮 איך זה ייגמר הלילה? 💦</button>\n  <button class=\"btn-back-datenight\" onclick=\"closePositionsBook()\">\u2190 \u05d7\u05d6\u05e8\u05d4 \u05dc-DateNight</button>\n</div>\n\n<div id=\"dg-pose-overlay\">\n  <div class=\"pose-modal\">\n    <div class=\"pose-img-wrap\">\n      <img id=\"dg-pose-img\" src=\"\" alt=\"\" style=\"width:100%;display:block;object-fit:cover\" />\n      <div class=\"pose-num-badge\" id=\"dg-num-badge\">#1</div>\n      <button class=\"btn-close-modal\" onclick=\"DiceGameApp.closeModal()\">\u2715</button>\n      <button class=\"btn-nav-pose btn-nav-prev\" onclick=\"DiceGameApp.navPose(-1)\">\u25bc</button>\n      <button class=\"btn-nav-pose btn-nav-next\" onclick=\"DiceGameApp.navPose(1)\">\u25b2</button>\n    </div>\n    <div class=\"pose-info\">\n      <div class=\"pose-name\" id=\"dg-pose-name\"></div>\n      <div class=\"desc-row\">\n        <button class=\"btn-gif-pose\" onclick=\"DiceGameApp.rollEnding()\">💦</button>\n        <div id=\"dg-desc\" class=\"pose-desc\"></div>\n      </div>\n      <div class=\"diff-wrap\">\n        <span class=\"diff-label\">\u05e8\u05de\u05ea \u05e7\u05d5\u05e9\u05d9</span>\n        <div class=\"diff-dots\" id=\"dg-diff-dots\">\n          <span class=\"diff-dot\" data-i=\"1\"></span>\n          <span class=\"diff-dot\" data-i=\"2\"></span>\n          <span class=\"diff-dot\" data-i=\"3\"></span>\n          <span class=\"diff-dot\" data-i=\"4\"></span>\n          <span class=\"diff-dot\" data-i=\"5\"></span>\n        </div>\n      </div>\n      <div id=\"dg-card-male\" class=\"pose-card male\" style=\"display:none\">\n        <div class=\"pose-card-title\">\u05d9\u05ea\u05e8\u05d5\u05e0\u05d5\u05ea \u05dc\u05d2\u05d1\u05e8 <span>\u2642\ufe0f</span></div>\n        <div class=\"pose-card-body\" id=\"dg-male-body\"></div>\n      </div>\n      <div id=\"dg-card-female\" class=\"pose-card\" style=\"display:none\">\n        <div class=\"pose-card-title\">\u05d9\u05ea\u05e8\u05d5\u05e0\u05d5\u05ea \u05dc\u05d0\u05d9\u05e9\u05d4 <span>\u2640\ufe0f</span></div>\n        <div class=\"pose-card-body\" id=\"dg-female-body\"></div>\n      </div>\n      <div id=\"dg-card-tip\" class=\"pose-card tip\" style=\"display:none\">\n        <div class=\"pose-card-title\">\u05d8\u05d9\u05e4 \u05dc\u05d5\u05d4\u05d8 <span>\ud83d\udd25</span></div>\n        <div class=\"pose-card-body\" id=\"dg-tip-body\"></div>\n      </div>\n    </div>\n    <div class=\"rating-section\">\n      <div class=\"section-label\">\u2b50 \u05d3\u05e8\u05d2\u05d5 \u05d0\u05ea \u05d4\u05ea\u05e0\u05d5\u05d7\u05d4</div>\n      <div class=\"stars-row\" id=\"dg-stars\">\n        <button class=\"star-btn\" data-val=\"1\">\u2b50</button>\n        <button class=\"star-btn\" data-val=\"2\">\u2b50</button>\n        <button class=\"star-btn\" data-val=\"3\">\u2b50</button>\n        <button class=\"star-btn\" data-val=\"4\">\u2b50</button>\n        <button class=\"star-btn\" data-val=\"5\">\u2b50</button>\n      </div>\n      <textarea class=\"notes-input\" id=\"dg-notes\" placeholder=\"\u05d4\u05d5\u05e1\u05d9\u05e4\u05d5 \u05d4\u05e2\u05e8\u05d4 (\u05d0\u05d5\u05e4\u05e6\u05d9\u05d5\u05e0\u05dc\u05d9)...\"></textarea>\n      <div class=\"section-label\" style=\"margin-top:14px\">\ud83d\udd01 \u05dc\u05e0\u05e1\u05d5\u05ea \u05e9\u05d5\u05d1?</div>\n      <div class=\"try-again-row\">\n        <button class=\"toggle-btn\" id=\"dg-btn-yes\" onclick=\"DiceGameApp.setTryAgain(true)\">\ud83d\udc96 \u05e0\u05e0\u05e1\u05d4 \u05e9\u05d5\u05d1!</button>\n        <button class=\"toggle-btn\" id=\"dg-btn-no\" onclick=\"DiceGameApp.setTryAgain(false)\">\u2717 \u05dc\u05d0 \u05de\u05de\u05e9</button>\n      </div>\n    </div>\n    <div class=\"save-section\">\n      <button class=\"btn-save\" id=\"dg-btn-save\" disabled onclick=\"DiceGameApp.savePose()\">\ud83d\udcbe \u05e9\u05de\u05d5\u05e8 \u05d5\u05e2\u05d1\u05d5\u05e8 \u05d4\u05dc\u05d0\u05d4</button>\n      <button class=\"btn-skip\" onclick=\"DiceGameApp.skipPose()\">\ud83c\udfb2 \u05ea\u05e0\u05d5\u05d7\u05d4 \u05d0\u05d7\u05e8\u05ea</button>\n      <button class=\"btn-skip\" onclick=\"DiceGameApp.closeModal()\" style=\"margin-top:4px;border-color:rgba(201,168,76,0.4);color:var(--gold)\">\ud83c\udfe0 \u05d7\u05d6\u05e8\u05d4 \u05dc\u05d3\u05e3 \u05d4\u05e8\u05d0\u05e9\u05d9</button>\n    </div>\n  </div>\n</div>\n\n<div id=\"dg-history-overlay\">\n  <div class=\"history-modal\">\n    <div class=\"history-header\">\n      <div class=\"history-title\">\ud83d\udccb \u05d4\u05d9\u05e1\u05d8\u05d5\u05e8\u05d9\u05d4</div>\n      <button class=\"btn-close-history\" onclick=\"DiceGameApp.closeHistory()\">\u2715</button>\n    </div>\n    <div id=\"dg-history-content\"></div>\n  </div>\n</div>\n\n<div id=\"dg-ending-overlay\">\n  <div id=\"dg-ending-media\"></div>\n  <button class=\"btn-confirm-ending\" onclick=\"DiceGameApp.closeEnding()\">✅</button>\n</div>\n\n<div id=\"dg-finish\">\n  <div class=\"finish-emoji\">\ud83c\udfc6</div>\n  <div class=\"finish-title\">\u05e2\u05e9\u05d9\u05ea\u05dd \u05d0\u05ea \u05db\u05d5\u05dc\u05df!</div>\n  <div class=\"finish-sub\">\u05db\u05dc 365 \u05d4\u05ea\u05e0\u05d5\u05d7\u05d5\u05ea \u05d1\u05d5\u05e6\u05e2\u05d5.<br>\u05de\u05d3\u05d4\u05d9\u05dd! \u05d0\u05ea\u05dd \u05de\u05e7\u05e6\u05d5\u05e2\u05d9\u05d9\u05dd \u05d0\u05de\u05d9\u05ea\u05d9\u05d9\u05dd \ud83d\udd25</div>\n  <button class=\"btn-reset\" onclick=\"DiceGameApp.resetAll()\">\ud83d\udd04 \u05d4\u05ea\u05d7\u05dc \u05de\u05d7\u05d3\u05e9</button>\n</div>\n";
 
 window.DiceGameApp = (function() {
   'use strict';
@@ -6659,7 +6726,7 @@ window.DiceGameApp = (function() {
   async function rollEnding(){
     await loadGifFiles();
     if(!GIF_FILES || !GIF_FILES.length) return;
-    var file = GIF_FILES[Math.floor(Math.random() * GIF_FILES.length)];
+    var file = pickGif();
     var media = $('dg-ending-media');
     var isWebm = file.toLowerCase().endsWith('.webm') || file.toLowerCase().endsWith('.mp4');
     if(isWebm){
