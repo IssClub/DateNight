@@ -2285,6 +2285,16 @@ function DateNight() {
   const [passwordTarget, setPasswordTarget] = useState(null);
   const [passwordError, setPasswordError] = useState(false);
   const [showBioOffer, setShowBioOffer] = useState(false);
+  // App lock: show password modal on first mount if dn_app_lock === "1"
+  const [appLockChecked, setAppLockChecked] = useState(false);
+  useEffect(() => {
+    if (!splashDone || appLockChecked) return;
+    setAppLockChecked(true);
+    if (localStorage.getItem("dn_app_lock") === "1") {
+      setPasswordTarget("app_lock");
+      setShowPasswordModal(true);
+    }
+  }, [splashDone]);
   const [pendingRating, setPendingRating] = useState(null); // דייט שמחכה לדירוג
 
   // בדיקת דייטים שעברו ומחכים לדירוג - מופעל אחרי שה-splash נגמר
@@ -2367,9 +2377,14 @@ function DateNight() {
     setView("subcat");
   };
   const handlePasswordSubmit = async pwd => {
-    if (pwd === "SexyNight") {
+    const correctPwd = localStorage.getItem("dn_password") || "SexyNight";
+    if (pwd === correctPwd) {
       setShowPasswordModal(false);
       setPasswordError(false);
+      if (passwordTarget === "app_lock") {
+        // Just unlock — stay on home
+        return;
+      }
       if (passwordTarget === "adults") setSkippedCat(true);
       setSelectedSubcat(passwordTarget);
       setGenreFilter(null);
@@ -2424,6 +2439,9 @@ function DateNight() {
       setView("home");
       setTab("home");
     }
+  };
+  const goSettings = () => {
+    setView("settings");
   };
   const goRoulette = () => {
     setView("drinksroulette");
@@ -2511,7 +2529,12 @@ showPasswordModal && /*#__PURE__*/React.createElement(PasswordModal, {
     setDarkMode: setDarkMode,
     onSurprise: surpriseMe,
     onHistory: goHistory,
-    onItem: goItem
+    onItem: goItem,
+    onSettings: goSettings
+  }), view === "settings" && /*#__PURE__*/React.createElement(SettingsScreen, {
+    darkMode: darkMode,
+    setDarkMode: setDarkMode,
+    goHome: goHome
   }), view === "category" && /*#__PURE__*/React.createElement(CategoryScreen, {
     cat: selectedCat,
     onSubcat: goSubcat,
@@ -4235,7 +4258,8 @@ function HomeScreen({
   onHistory,
   onItem,
   darkMode,
-  setDarkMode
+  setDarkMode,
+  onSettings
 }) {
   const topPicks = [RESTAURANTS[Math.floor(Math.random() * RESTAURANTS.length)], BARS[Math.floor(Math.random() * BARS.length)], [...THEATER, ...STANDUP, ...COOKING][Math.floor(Math.random() * (THEATER.length + STANDUP.length + COOKING.length))]];
   return /*#__PURE__*/React.createElement("div", {
@@ -4264,7 +4288,27 @@ function HomeScreen({
       justifyContent: "center",
       boxShadow: "0 2px 8px rgba(0,0,0,0.15)"
     }
-  }, darkMode ? "☀️" : "🌙"), /*#__PURE__*/React.createElement("div", {
+  }, darkMode ? "☀️" : "🌙"), /*#__PURE__*/React.createElement("button", {
+    onClick: onSettings,
+    style: {
+      position: "fixed",
+      top: "calc(env(safe-area-inset-top, 0px) + 8px)",
+      right: 12,
+      zIndex: 200,
+      background: "rgba(20,10,5,0.55)",
+      backdropFilter: "blur(8px)",
+      border: "none",
+      borderRadius: "50%",
+      width: 32,
+      height: 32,
+      fontSize: 16,
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      boxShadow: "0 2px 8px rgba(0,0,0,0.25)"
+    }
+  }, "⚙️"), /*#__PURE__*/React.createElement("div", {
     style: {
       background: `linear-gradient(160deg, #3d1c0e 0%, #6b3020 50%, #8b4a2a 100%)`,
       padding: "16px 20px 28px",
@@ -6399,6 +6443,301 @@ function StatBox({
     }
   }, label));
 }
+// ============================================================
+// SETTINGS SCREEN
+// ============================================================
+function SettingsScreen({ darkMode, setDarkMode, goHome }) {
+  const [pwdInput, setPwdInput] = useState("");
+  const [pwdMsg, setPwdMsg] = useState("");
+  const [faceMsg, setFaceMsg] = useState("");
+  const [histMsg, setHistMsg] = useState("");
+  const [appLock, setAppLock] = useState(() => localStorage.getItem("dn_app_lock") === "1");
+  const [showPwdForm, setShowPwdForm] = useState(false);
+
+  const sectionHeader = (label) => React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: 2,
+      textTransform: "uppercase",
+      color: T.gold,
+      padding: "22px 18px 8px",
+      fontFamily: FONT_SANS
+    }
+  }, label);
+
+  const row = (content, opts = {}) => React.createElement("div", {
+    style: {
+      background: T.card,
+      padding: "14px 18px",
+      borderBottom: `1px solid ${T.border}`,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 12,
+      ...opts.style
+    }
+  }, content);
+
+  const actionBtn = (label, onClick, danger) => React.createElement("button", {
+    onClick,
+    style: {
+      background: "none",
+      border: "none",
+      cursor: "pointer",
+      color: danger ? "#c0392b" : T.gold,
+      fontSize: 14,
+      fontFamily: FONT_SANS,
+      fontWeight: 600,
+      padding: 0
+    }
+  }, label);
+
+  const rowLabel = (text, sub) => React.createElement("div", { style: { flex: 1 } },
+    React.createElement("div", { style: { fontSize: 15, color: T.text, fontFamily: FONT_SANS } }, text),
+    sub ? React.createElement("div", { style: { fontSize: 12, color: T.textS, marginTop: 2, fontFamily: FONT_SANS } }, sub) : null
+  );
+
+  // Toggle switch component
+  const Toggle = ({ value, onChange }) => React.createElement("div", {
+    onClick: () => onChange(!value),
+    style: {
+      width: 46,
+      height: 26,
+      borderRadius: 13,
+      background: value ? T.gold : T.border,
+      position: "relative",
+      cursor: "pointer",
+      transition: "background 0.25s",
+      flexShrink: 0
+    }
+  }, React.createElement("div", {
+    style: {
+      position: "absolute",
+      top: 3,
+      left: value ? 23 : 3,
+      width: 20,
+      height: 20,
+      borderRadius: "50%",
+      background: "white",
+      transition: "left 0.25s",
+      boxShadow: "0 1px 4px rgba(0,0,0,0.3)"
+    }
+  }));
+
+  // Backup
+  const handleBackup = () => {
+    const keys = ["favorites", "dateHistory", "poseHistory", "savedPoses", "poseRatings"];
+    const data = {};
+    keys.forEach(k => {
+      const v = localStorage.getItem(k);
+      if (v !== null) data[k] = JSON.parse(v);
+    });
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const d = new Date();
+    a.href = url;
+    a.download = `datenight-backup-${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Restore
+  const fileInputRef = useRef(null);
+  const handleRestore = () => { if (fileInputRef.current) fileInputRef.current.click(); };
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        Object.entries(data).forEach(([k, v]) => {
+          localStorage.setItem(k, JSON.stringify(v));
+        });
+        window.location.reload();
+      } catch {
+        alert("קובץ לא תקין");
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  // Reset history
+  const handleResetHistory = () => {
+    if (window.confirm("למחוק את כל ההיסטוריה? פעולה זו אינה הפיכה.")) {
+      localStorage.removeItem("dateHistory");
+      localStorage.removeItem("poseHistory");
+      setHistMsg("ההיסטוריה נמחקה ✓");
+      setTimeout(() => setHistMsg(""), 3000);
+    }
+  };
+
+  // Change password
+  const handleSavePwd = () => {
+    if (!pwdInput.trim()) { setPwdMsg("הכנס סיסמה"); return; }
+    localStorage.setItem("dn_password", pwdInput.trim());
+    setPwdMsg("הסיסמה עודכנה ✓");
+    setPwdInput("");
+    setShowPwdForm(false);
+    setTimeout(() => setPwdMsg(""), 3000);
+  };
+
+  // Reset Face ID
+  const handleResetFaceId = () => {
+    localStorage.removeItem("dn_bio_id");
+    setFaceMsg("Face ID אופס ✓");
+    setTimeout(() => setFaceMsg(""), 3000);
+  };
+
+  // App lock toggle
+  const handleAppLockToggle = (val) => {
+    setAppLock(val);
+    localStorage.setItem("dn_app_lock", val ? "1" : "0");
+  };
+
+  return React.createElement("div", {
+    style: {
+      minHeight: "100vh",
+      background: T.cream,
+      paddingBottom: 80,
+      direction: "rtl",
+      fontFamily: FONT_SANS
+    }
+  },
+    // Header
+    React.createElement("div", {
+      style: {
+        background: "linear-gradient(160deg, #3d1c0e 0%, #6b3020 100%)",
+        padding: "20px 18px 24px",
+        display: "flex",
+        alignItems: "center",
+        gap: 14
+      }
+    },
+      React.createElement("button", {
+        onClick: goHome,
+        style: {
+          background: "rgba(255,255,255,0.1)",
+          border: "none",
+          borderRadius: "50%",
+          width: 36,
+          height: 36,
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: 18,
+          color: "white",
+          flexShrink: 0
+        }
+      }, "←"),
+      React.createElement("h1", {
+        style: {
+          color: T.goldL,
+          fontSize: 22,
+          fontWeight: 800,
+          margin: 0,
+          fontFamily: FONT
+        }
+      }, "⚙️ הגדרות")
+    ),
+
+    // ── Section: נתונים ──
+    sectionHeader("נתונים 📦"),
+    React.createElement("div", { style: { background: T.card, borderRadius: 0 } },
+      row(React.createElement(React.Fragment, null,
+        rowLabel("גיבוי נתונים", "ייצוא כל הנתונים לקובץ JSON"),
+        actionBtn("גבה", handleBackup)
+      )),
+      row(React.createElement(React.Fragment, null,
+        rowLabel("שחזור נתונים", "ייבוא מקובץ גיבוי"),
+        actionBtn("שחזר", handleRestore)
+      )),
+      row(React.createElement(React.Fragment, null,
+        rowLabel("איפוס היסטוריה", histMsg || "מחיקת היסטוריית דייטים ופוזות"),
+        actionBtn("אפס", handleResetHistory, true)
+      )),
+      React.createElement("input", {
+        ref: fileInputRef,
+        type: "file",
+        accept: ".json",
+        style: { display: "none" },
+        onChange: handleFileChange
+      })
+    ),
+
+    // ── Section: תצוגה ──
+    sectionHeader("תצוגה 🎨"),
+    React.createElement("div", { style: { background: T.card } },
+      row(React.createElement(React.Fragment, null,
+        rowLabel("מצב לילה", "רקע כהה לעיניים רגועות"),
+        React.createElement(Toggle, { value: darkMode, onChange: setDarkMode })
+      ))
+    ),
+
+    // ── Section: פרטיות ──
+    sectionHeader("פרטיות 🔐"),
+    React.createElement("div", { style: { background: T.card } },
+      row(React.createElement(React.Fragment, null,
+        rowLabel("שינוי סיסמת 18+", pwdMsg || "סיסמה לכניסה לאזור המבוגרים"),
+        actionBtn(showPwdForm ? "ביטול" : "שנה", () => { setShowPwdForm(f => !f); setPwdMsg(""); })
+      )),
+      showPwdForm ? row(
+        React.createElement("div", { style: { display: "flex", gap: 8, width: "100%", alignItems: "center" } },
+          React.createElement("input", {
+            type: "password",
+            placeholder: "סיסמה חדשה",
+            value: pwdInput,
+            onChange: e => setPwdInput(e.target.value),
+            onKeyDown: e => e.key === "Enter" && handleSavePwd(),
+            style: {
+              flex: 1,
+              padding: "10px 14px",
+              borderRadius: 10,
+              border: `1.5px solid ${T.border}`,
+              fontSize: 16,
+              background: T.cream,
+              color: T.text,
+              fontFamily: FONT_SANS,
+              outline: "none",
+              direction: "ltr"
+            }
+          }),
+          React.createElement("button", {
+            onClick: handleSavePwd,
+            style: {
+              background: T.gold,
+              color: "white",
+              border: "none",
+              borderRadius: 10,
+              padding: "10px 16px",
+              fontSize: 14,
+              fontWeight: 700,
+              cursor: "pointer",
+              fontFamily: FONT_SANS
+            }
+          }, "שמור")
+        ), { style: { background: T.card, padding: "10px 18px", borderBottom: `1px solid ${T.border}` } }
+      ) : null,
+      row(React.createElement(React.Fragment, null,
+        rowLabel("איפוס Face ID", faceMsg || "מחיקת הרשאת ביומטרי"),
+        actionBtn("אפס", handleResetFaceId, true)
+      ))
+    ),
+
+    // ── Section: נעילה ──
+    sectionHeader("נעילה 🔒"),
+    React.createElement("div", { style: { background: T.card } },
+      row(React.createElement(React.Fragment, null,
+        rowLabel("נעל אפליקציה בפתיחה", "דרוש סיסמה בכל פתיחה"),
+        React.createElement(Toggle, { value: appLock, onChange: handleAppLockToggle })
+      ))
+    )
+  );
+}
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(/*#__PURE__*/React.createElement(DateNight, null));
 </script>
