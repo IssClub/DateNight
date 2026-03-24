@@ -2424,7 +2424,10 @@ function DateNight() {
       await registerBiometric();
     } catch {}
   };
+  const scrollPosRef = React.useRef(0);
   const goItem = item => {
+    const scroller = document.querySelector('.subcat-scroll') || document.querySelector('.cat-scroll') || document.scrollingElement;
+    scrollPosRef.current = scroller ? scroller.scrollTop : window.scrollY;
     setSelectedItem(item);
     setView("item");
   };
@@ -2444,10 +2447,15 @@ function DateNight() {
   };
   const goBack = () => {
     if (view === "item") {
+      const savedPos = scrollPosRef.current;
       if (selectedSubcat) setView("subcat");else if (selectedCat) setView("category");else {
         setView("home");
         setTab("home");
       }
+      setTimeout(() => {
+        const scroller = document.querySelector('.subcat-scroll') || document.querySelector('.cat-scroll') || document.scrollingElement;
+        if (scroller) scroller.scrollTop = savedPos;else window.scrollTo(0, savedPos);
+      }, 50);
     } else if (view === "subcat") {
       setSelectedSubcat(null);
       const subcats = SUBCAT_CONFIG[selectedCat];
@@ -3521,9 +3529,8 @@ const ADULTS = [{
   color2: "#c0392b",
   emoji: "📖",
   babysitter: false,
-  why: "כי לפעמים ספר שווה אלף מילים. בחרו ביחד, גלו ביחד",
-  tips: ["התחילו בספר קלאסי כמו Kama Sutra", "בחרו פרק ביחד ונסו לתרגם אותו לחיים", "אל תלחצו - צחוק זה חלק מהכיף 😄"],
-  link: "https://www.amazon.co.il/s?k=kama+sutra"
+  why: "כי אפליקציית 365 מחכה לכם עם תנוחות, תיאורים ויתרונות לשניכם 🎲",
+  tips: ["גלגלו תנוחה באפליקציה, ספגו את התמונה — ואז פשוט תנסו", "אין לחץ ואין ציפיות — רק כיף וגילוי משותף 💕", "שמרו את התנוחות שאהבתם ובנו את הספר שלכם"]
 }, {
   id: 2002,
   name: "סרט אירוטי",
@@ -5166,12 +5173,12 @@ function ItemScreen({
       fontSize: 16,
       display: "block"
     }
-  }, "\uD83C\uDFAD \u05D4\u05D6\u05DE\u05E0\u05EA \u05DB\u05E8\u05D8\u05D9\u05E1\u05D9\u05DD - ", item.venue), item.link && !item.trailerLink && !item.venue && /*#__PURE__*/React.createElement("a", {
+  }, "\uD83C\uDFAD \u05D4\u05D6\u05DE\u05E0\u05EA \u05DB\u05E8\u05D8\u05D9\u05E1\u05D9\u05DD - ", item.venue), item.link && !item.trailerLink && !item.venue && item.id !== 2001 && /*#__PURE__*/React.createElement("a", {
     href: item.link,
     target: "_blank",
     rel: "noopener noreferrer",
     style: {
-      background: "linear-gradient(135deg, #10b981, #059669)",
+      background: "linear-gradient(135deg, #7a9e7e, #5c7a5f)",
       color: "white",
       borderRadius: 14,
       padding: "14px",
@@ -5181,7 +5188,7 @@ function ItemScreen({
       fontSize: 16,
       display: "block"
     }
-  }, "\uD83D\uDD17 \u05DC\u05D0\u05EA\u05E8 \u05D4\u05DE\u05E7\u05D5\u05DD"), item.id === 2001 && /*#__PURE__*/React.createElement("button", {
+  }, "🔗 לאתר המקום"), item.id === 2001 && /*#__PURE__*/React.createElement("button", {
     onClick: () => window.openPositionsBook(),
     style: {
       background: "linear-gradient(135deg, #8e0000, #e8417a)",
@@ -5200,10 +5207,10 @@ function ItemScreen({
       width: "100%",
       letterSpacing: 0.5
     }
-  }, /*#__PURE__*/React.createElement("span", null, "\uD83C\uDFB2"), " \u05E4\u05EA\u05D7 \u05E1\u05E4\u05E8 \u05EA\u05E0\u05D5\u05D7\u05D5\u05EA"), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("span", null, "🎲"), " בואו נצלול אל הלא נודע"), /*#__PURE__*/React.createElement("button", {
     onClick: onAnother,
     style: {
-      background: "linear-gradient(135deg, #e91e63, #9b59b6)",
+      background: "linear-gradient(135deg, #c4716a, #a85c57)",
       color: "white",
       border: "none",
       borderRadius: 14,
@@ -5212,10 +5219,10 @@ function ItemScreen({
       fontSize: 16,
       cursor: "pointer"
     }
-  }, "\uD83C\uDFB2 \u05E8\u05E2\u05D9\u05D5\u05DF \u05D0\u05D7\u05E8"), /*#__PURE__*/React.createElement("button", {
+  }, "🎲 רעיון אחר"), /*#__PURE__*/React.createElement("button", {
     onClick: () => setShowPinModal(true),
     style: {
-      background: "linear-gradient(135deg, #667eea, #764ba2)",
+      background: "linear-gradient(135deg, #c9974a, #a87b38)",
       color: "white",
       border: "none",
       borderRadius: 14,
@@ -5224,7 +5231,7 @@ function ItemScreen({
       fontSize: 16,
       cursor: "pointer"
     }
-  }, "\uD83D\uDCC5 \u05E0\u05E2\u05E5 \u05EA\u05D0\u05E8\u05D9\u05DA"))));
+  }, "📅 נעץ תאריך"))));
 }
 
 // ============================================================
@@ -5440,15 +5447,18 @@ function PinDateModal({
     onChange: e => setDateInput(e.target.value),
     style: {
       width: "100%",
+      maxWidth: "100%",
       border: "2px solid #e5e7eb",
       borderRadius: 12,
       padding: "12px 14px",
       fontSize: 15,
       fontFamily: "inherit",
       direction: "ltr",
+      textAlign: "center",
       outline: "none",
       boxSizing: "border-box",
-      marginBottom: 8
+      marginBottom: 8,
+      display: "block"
     }
   }), dateInput && (() => {
     const d = new Date(dateInput);
