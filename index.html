@@ -4316,49 +4316,49 @@ const CATEGORIES = [{
   id: "restaurant",
   label: "מסעדות",
   icon: "🍽️",
-  color: "#ff6b35",
+  color: "#c98a82",
   subcats: null
 }, {
   id: "bar",
   label: "ברים",
   icon: "🍷",
-  color: "#9b59b6",
+  color: "#a890c4",
   subcats: null
 }, {
   id: "culture",
   label: "תרבות",
   icon: "🎭",
-  color: "#3498db",
+  color: "#c4a060",
   subcats: ["theater", "movies", "standup"]
 }, {
   id: "home",
   label: "בילוי ביתי",
   icon: "🏠",
-  color: "#e91e63",
+  color: "#d4a8a3",
   subcats: ["cooking", "homemovie", "homeseries", "games", "homegames"]
 }, {
   id: "intimate",
   label: "זוגי אינטימי",
   icon: "💕",
-  color: "#e91e63",
+  color: "#b888a0",
   subcats: ["adults"]
 }, {
   id: "casual",
   label: "קליל וכיפי",
   icon: "☀️",
-  color: "#f39c12",
+  color: "#d4b87a",
   subcats: ["coffeecarts", "picnic"]
 }, {
   id: "experience",
   label: "חוויתי",
   icon: "✨",
-  color: "#1abc9c",
+  color: "#c98a82",
   subcats: ["spa", "workshop"]
 }, {
   id: "adventure",
   label: "הרפתקני",
   icon: "🏔️",
-  color: "#e67e22",
+  color: "#c4a060",
   subcats: null
 }];
 function HomeScreen({
@@ -4549,25 +4549,26 @@ function HomeScreen({
     onClick: () => onItem(item)
   })))), /*#__PURE__*/React.createElement("div", {
     style: {
-      textAlign: "center",
-      padding: "12px 0 4px"
+      padding: "16px 16px 8px"
     }
   }, /*#__PURE__*/React.createElement("button", {
     onClick: onSettings,
     style: {
-      background: "rgba(92,61,46,0.1)",
-      border: "1px solid rgba(92,61,46,0.2)",
-      borderRadius: "50%",
-      width: 36,
-      height: 36,
-      fontSize: 18,
+      width: "100%",
+      background: "rgba(92,61,46,0.08)",
+      border: "1px solid rgba(92,61,46,0.18)",
+      borderRadius: 14,
+      padding: "12px 16px",
+      fontSize: 15,
+      fontWeight: 600,
       cursor: "pointer",
-      display: "inline-flex",
+      display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      color: "rgba(92,61,46,0.5)"
+      gap: 8,
+      color: "rgba(92,61,46,0.6)"
     }
-  }, "⚙️")));
+  }, "⚙️ הגדרות")));
 }
 
 // ============================================================
@@ -7242,13 +7243,15 @@ window.DiceGameApp = (function() {
   async function rollEnding(){
     await loadGifFiles();
     if(!GIF_FILES || !GIF_FILES.length) return;
-    var file = pickGif();
+    var gifObj = pickGif();
+    var fname = gifObj.file || gifObj;
+    var fpath = gifObj.path || ('GIF/'+fname);
     var media = $('dg-ending-media');
-    var isWebm = file.toLowerCase().endsWith('.webm') || file.toLowerCase().endsWith('.mp4');
+    var isWebm = fname.toLowerCase().endsWith('.webm') || fname.toLowerCase().endsWith('.mp4');
     if(isWebm){
-      media.innerHTML = '<video src="./GIF/'+file+'" autoplay loop playsinline muted style="width:100%;height:100%;object-fit:contain"></video>';
+      media.innerHTML = '<video src="./'+fpath+'" autoplay loop playsinline muted style="width:100%;height:100%;object-fit:contain"></video>';
     } else {
-      media.innerHTML = '<img src="./GIF/'+file+'" style="width:100%;height:100%;object-fit:contain">';
+      media.innerHTML = '<img src="./'+fpath+'" style="width:100%;height:100%;object-fit:contain">';
     }
     $('dg-ending-overlay').classList.add('active');
   }
