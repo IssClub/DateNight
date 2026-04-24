@@ -55,6 +55,25 @@ content = content.replace(
 // 6. Write output
 fs.writeFileSync(DIST, content);
 
+// 7. Auto-regenerate gifs.json from GIF subfolders
+const gifDir = path.join(__dirname, 'GIF');
+if (fs.existsSync(gifDir)) {
+  const gifData = {};
+  const cats = fs.readdirSync(gifDir).filter(f =>
+    fs.statSync(path.join(gifDir, f)).isDirectory()
+  );
+  cats.forEach(cat => {
+    const files = fs.readdirSync(path.join(gifDir, cat))
+      .filter(f => /\.(gif|mp4|webm|mov)$/i.test(f));
+    if (files.length) {
+      gifData[cat] = files.map(file => ({ file, path: `GIF/${cat}/${file}` }));
+    }
+  });
+  fs.writeFileSync(path.join(__dirname, 'gifs.json'), JSON.stringify(gifData, null, 2));
+  const total = Object.values(gifData).reduce((a, b) => a + b.length, 0);
+  console.log(`  gifs.json  → ${cats.length} categories, ${total} files  ✓ auto-synced`);
+}
+
 const srcSize  = (fs.statSync(SRC).size  / 1024).toFixed(1);
 const distSize = (fs.statSync(DIST).size / 1024).toFixed(1);
 console.log(`Done!`);
