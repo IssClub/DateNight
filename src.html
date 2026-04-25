@@ -7206,6 +7206,7 @@ window.DiceGameApp = (function() {
     _currentGifFile = null;
     _currentGifCat  = null;
     closeEnding();
+    if(!yes) rollEnding();
   }
   function closeEnding(){
     $('dg-ending-overlay').classList.remove('active');
