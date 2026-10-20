@@ -74,6 +74,50 @@ if (fs.existsSync(gifDir)) {
   console.log(`  gifs.json  → ${cats.length} categories, ${total} files  ✓ auto-synced`);
 }
 
+// 8. Auto-regenerate roleplay.json from img/roleplay/ structure
+const rpDir = path.join(__dirname, 'img', 'roleplay');
+if (fs.existsSync(rpDir)) {
+  const roleplays = {};
+  const entries = fs.readdirSync(rpDir);
+  // Group direct files: stewardess.jpg + stewardess2.jpg → same session
+  const directFiles = entries.filter(e => {
+    try { return fs.statSync(path.join(rpDir, e)).isFile() && /\.(jpg|jpeg|png|webp)$/i.test(e); } catch { return false; }
+  });
+  const fileGroups = {};
+  directFiles.forEach(file => {
+    const base = file.replace(/\.[^.]+$/, '');
+    const m = base.match(/^(.+?)(\d+)$/);
+    const key = m ? m[1].toLowerCase() : base.toLowerCase();
+    if (!fileGroups[key]) fileGroups[key] = [];
+    fileGroups[key].push(file);
+  });
+  Object.entries(fileGroups).forEach(([key, files]) => {
+    files.sort();
+    roleplays[key] = [files.map(f => `img/roleplay/${f}`)];
+  });
+  entries.filter(e => {
+    try { return fs.statSync(path.join(rpDir, e)).isDirectory(); } catch { return false; }
+  }).forEach(dir => {
+    const photos = fs.readdirSync(path.join(rpDir, dir))
+      .filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f))
+      .sort()
+      .map(f => `img/roleplay/${dir}/${f}`);
+    if (!photos.length) return;
+    const match = dir.match(/^(.+?)(\d+)$/);
+    if (match) {
+      const key = match[1].toLowerCase();
+      const idx = parseInt(match[2]) - 1;
+      if (!roleplays[key]) roleplays[key] = [];
+      roleplays[key][idx] = photos;
+    } else {
+      roleplays[dir.toLowerCase()] = [photos];
+    }
+  });
+  Object.keys(roleplays).forEach(k => { roleplays[k] = roleplays[k].filter(Boolean); });
+  fs.writeFileSync(path.join(__dirname, 'roleplay.json'), JSON.stringify(roleplays, null, 2));
+  console.log(`  roleplay.json → ${Object.keys(roleplays).length} scenarios  ✓ auto-synced`);
+}
+
 const srcSize  = (fs.statSync(SRC).size  / 1024).toFixed(1);
 const distSize = (fs.statSync(DIST).size / 1024).toFixed(1);
 console.log(`Done!`);

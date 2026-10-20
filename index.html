@@ -3630,49 +3630,155 @@ const ADULTS = [{
   babysitter: false,
   why: "בחרו תרחיש ביחד - הציפייה והמתח שווים הכל!",
   ideas: [{
-    text: "🏥 רופא/ה ומטופל/ת — הבדיקה שתשנה הכל",
-    photos: ["img/roleplay/nurse.jpg"],
-    description: "👗 גלימה לבנה פתוחה, המטופל/ת שוכב/ת על הגב — רק תחתונים. 💋 הרופא/ה 'בודק/ת' לאט מהצוואר ומטה, יורד/ת מתחת לסדין ועובד/ת בפה. ממשיכים מיסיונרי על המיטה, גמירה על הגלימה הלבנה."
+    id: "nurse",
+    text: "🏥 אחות ומטופל — הבדיקה שתשנה הכל",
+    photoKey: "nurse",
+    outfit: "אחות — שמלה לבנה קצרה, מחוך לבן מתחת, גרביונים לבנים, עקבים לבנים. מטופל — חלוק בית פתוח, בלי תחתונים.",
+    scene: "\"אתה לא מרגיש טוב? בוא נבדוק לגמרי.\" יורדת לאט מהצוואר בשפתיים עם כפפות לטקס. מורידה את החלוק ויורדת למציצה ארוכה ועמוקה. ממשיכים מיסיונרי על מיטת הבדיקה, רגליים על הכתפיים, זיון חזק. שפיכה על השמלה הלבנה — או על הפנים אם מתהפכת ברגע האחרון."
   }, {
-    text: "👔 בוס ומזכיר/ה — שעות נוספות במשרד",
-    photos: ["img/roleplay/boss.jpg"],
-    description: "👗 עניבה, עקבים שחורים, חצאית עסקית — ומתחתיה כלום. 💋 'שב/י על השולחן.' הבוס מרים/ה את החצאית ויורד/ת בפה. ממשיכים מיסיונרי על השולחן, גמירה על החולצה הלבנה."
+    id: "boss",
+    text: "👔 בוס ומזכירה — שעות נוספות במשרד",
+    photoKey: "boss",
+    outfit: "מזכירה — חצאית עיפרון שחורה, גרביונים שחורים, חולצה לבנה עם עניבה רפויה, עקבים שחורים — ומתחת לחצאית כלום. בוס — חליפה, עניבה, שעון.",
+    scene: "\"סגרי את הדלת.\" הוא מרים אותה על השולחן ומזיז את החצאית. \"שוב בלי תחתונים?\" יורד לה בפה על השולחן עד שהיא כמעט גומרת. ממשיכים — היא נשענת על השולחן מלפנים, הוא מאחוריה, זיון חזק. שפיכה על הגב הנחשף — או על הפנים שלה אם יורדת ברגע האחרון."
   }, {
-    text: "🕵️ חוקר/ת ועד — חקירה בחדר חשוך",
-    photos: [],
-    description: "👗 חולצה כהה, מכנסיים צמודים. הנחקר/ת כפות לכיסא. 💋 'תדבר/י או שאפרוץ אותך.' מתחיל/ה לתת בפה כדי 'לרכך'. ממשיכים דוגי מאחור — ידיים כפותות כל הזמן."
+    id: "waiter",
+    text: "🤵 מלצרית ואורח יוקרתי — ערב גאלה בלעדי",
+    photoKey: "gala",
+    outfit: "מלצרית — חצאית שחורה קצרה, חולצה לבנה צמודה, סינר קטן, עקבים. אורח — חליפה כהה, עניבת משי.",
+    scene: "\"חדר 714 — תביאי עוד יין.\" היא מגיעה. הוא פותח את הדלת חצי ערום. \"אולי אתה רוצה משהו אחר?\" — ויורדת לברכיים, פותחת לו בגרון. ממשיכים — היא יושבת עליו על הכיסא פנים מול פנים, זיינת אותו חזק. שפיכה בתוכה — או שהיא מורידה ידיים ומקבלת על הפנים."
   }, {
-    text: "🧑‍🏫 מורה ותלמיד/ה — שיעור פרטי",
-    photos: [],
-    description: "👗 חצאית קצרה / מכנסי ספורט, בלי תחתונים. 💋 'אתה/את נכשל/ת שוב.' המורה מורה לשבת על השולחן ופותח/ת בפה. השיעור ממשיך דוגי מאחור — עד שהתלמיד/ה לומד/ת את הלקח."
+    id: "pizza",
+    text: "🍕 שליח פיצה ואמא חמה — אין כסף לשלם",
+    photoKey: "pizza",
+    outfit: "אמא — גלימת בית פתוחה, ביקיני קטן מתחת, יחפה, ללא חזייה. שליח — תלבושת עבודה, כובע.",
+    scene: "\"שכחתי כסף... אבל יש לי מה לתת לך.\" הגלימה נפתחת. הוא נכנס פנימה. היא דוחפת אותו לכיסא ויורדת לו למציצה מהירה ונחרצת. ממשיכים על הספה — היא על הגב, ברכיים מורמות, זיון חזק ורועש. שפיכה על הבטן ועל הביקיני — או שהיא מבקשת על הפנים."
   }, {
-    text: "🍕 שליח/ת פיצה — אין כסף לשלם, מה עושים?",
-    photos: ["img/roleplay/pizza.jpg"],
-    description: "👗 כל בגד יומיומי + קופסת פיצה ריקה. 💋 'אין לי מזומן... אבל יש לי רעיון.' השליח/ה נכנס/ת פנימה. היא/הוא כורע/ת ועובד/ת בפה. ממשיכים דוגי על הספה — עד שהשליח/ה לוקח/ת 'טיפ' גדול."
-  }, {
+    id: "flight",
     text: "✈️ דיילת ונוסע — טיסת לילה ארוכה",
-    photos: ["img/roleplay/stewardess.jpg", "img/roleplay/stewardess2.jpg"],
-    description: "👗 שמלה כחולה צמודה, עניבה קטנה, גרביים. 💋 'יש לי בעיה עם החגורה...' הדיילת יורדת לו/ה בפה. ממשיכים על הקיר מאחור — שמלה מורמת, עניבה ביד — גמירה על הגרביים."
+    photoKey: "stewardess",
+    outfit: "דיילת — תלבושת כחולה, חצאית, גרביונים, עקבים, כפתורים עד למעלה — ומתחת תחרה. נוסע — חולצה מכופתרת, מכנסיים.",
+    scene: "טיסת לילה, כולם ישנים. \"אדוני צריך משהו?\" הוא מושך אותה לתא השירותים. היא יושבת על הכיור. הוא פותח לה כפתור-כפתור. היא מורידה גרביונים ויורדת לו למציצה. ממשיכים — היא נשענת על הקיר, רגל אחת מורמת, הוא מזיין אותה מאחורה בשקט. שפיכה על הגרביונים שבידה — או על הפנים שלה."
   }, {
-    text: "🤵 עשיר/ה ומלצר/ית — ערב גאלה בלעדי",
-    photos: ["img/roleplay/gala.jpg"],
-    description: "👗 שמלת ערב שחורה עמוקה / חליפה, סינר לבן, נרות. 💋 'שפכת יין עלי — תנקה.' המלצר/ית עולה מהרגליים בפה, שמלה מורמת. ממשיכים על הקיר בחדר האורחים — גמירה על הסינר הלבן."
+    id: "detective",
+    text: "🕵️ חוקרת ועד — חקירה בחדר חשוך",
+    photoKey: "detective",
+    outfit: "חוקרת — חליפה אפורה, מכנסיים צמודים, שיניים לשיער, עקבים נמוכים. עד — ג'ינס, חולצה.",
+    scene: "חדר חשוך, כיסא, נורת חקירה. \"אתה יודע למה אתה פה.\" היא קושרת לו את הידיים לכיסא ויורדת לו למציצה ארוכה ואיטית, עיניים לא מרפות ממנו. ממשיכים — היא מתיישבת עליו, ידיה על כתפיו, זיינת אותו עד שהוא שופך לה בתוכה. \"עכשיו תדבר.\""
   }, {
-    text: "👠 המפתה והתמים/ה — מי מנצח?",
-    photos: [],
-    description: "👗 הלבוש הכי סקסי שיש — ולאחד/ת מהם כלום מתחת. 💋 אחד/ת מנסה לפתות, השני/ה מתנגד/ת — עד שמתפרץ/ת ומציף/ה אותו/ה בפה. ממשיכים מיסיונרי, ואז על הקיר."
+    id: "teacher",
+    text: "🧑‍🏫 מורה ותלמיד — שיעור פרטי",
+    photoKey: "teacher",
+    outfit: "מורה — חצאית עד הברך, גרביונים, חולצה לבנה, משקפיים, שיער אסוף. תלמיד — מדי בית ספר, עניבה.",
+    scene: "\"נשארת אחרי השיעור?\" היא מסירה את המשקפיים לאט. \"יש לי שיעור אחר בשבילך.\" מנחה את ידו מתחת לחצאית. ממשיכים — היא על שולחן המורה, גרביונים קרועים, ברכיים פתוחות, הוא מזיין אותה חזק. שפיכה על הגרביונים — או על הפנים שלה אם יורדת ברגע האחרון."
   }, {
-    text: "👮 שוטר/ת ועצור/ה — חיפוש אישי",
-    photos: [],
-    description: "👗 חולצה כהה, כובע (אפשר מאולתר), אזיקים או גומייה. 💋 'ידיים על הקיר, רגליים פתוחות.' החיפוש הידני מגיע למטה ולא עוצר. ממשיכים על הקיר מאחור — אזיקים נשארים."
+    id: "seducer",
+    text: "👠 המפתה והתמים — מי מנצח?",
+    photoKey: "seducer",
+    outfit: "מפתה — שמלת מיני אדומה, מחוך שחור, עקבים אדומים, שפתון אדום. תמים — פיג'מה, נראה מנומנם.",
+    scene: "\"ישנת כבר? חבל...\" היא מתגנבת למיטה ומתחילה לגעת. הוא \"מתעורר\". \"מה—\" \"שקט. תן לי לעשות מה שאני רוצה.\" יורדת לו למציצה עמוקה. ממשיכים — דוגי, היא שולטת בקצב, ידיו על הישבן. שפיכה על הגב מהכתפיים למטה."
   }, {
-    text: "🧖 מסאז'יסט/ית ולקוח/ה — טיפול מיוחד",
-    photos: [],
-    description: "👗 מגבת בלבד, שמן על כל הגוף. 💋 המסאז' מתחיל בגב, יורד לישבן ולרגליים. 'יש שרירים שדורשים טיפול פנימי.' עוברים לפה, ואז מיסיונרי על המגבת — שמן עד הסוף."
+    id: "cop",
+    text: "👮 שוטרת ועצור — חיפוש אישי",
+    photoKey: "cop",
+    outfit: "שוטרת — מדים, חגורת ציוד, קוקו הדוק. עצור — ידיים כפותות אחורה.",
+    scene: "\"יש לך זכות לשתוק — אבל אתה לא תרצה.\" חיפוש אישי — ידיה יורדות לאט מהכתפיים. \"מה זה פה?\" יורדת לו למציצה בעמידה. ממשיכים — הוא על הקיר, ואז מסתובבים — מיסיונרי על הרצפה. שפיכה על המדים, גובה הצוואר — או על הפנים שלה."
   }, {
-    text: "🏠 שכנה נועזת — השאלת סוכר",
-    photos: [],
-    description: "👗 חלוק בית קצר — ומתחתיו כלום. 💋 דפיקה על הדלת: 'יש לך סוכר?' החלוק נפתח לפני שהדלת נסגרת. מסתיים על הקיר במסדרון, בשקט, לפני שהשכנים שומעים."
+    id: "massage",
+    text: "🧖 מסאז'יסטית ולקוח — טיפול מיוחד",
+    photoKey: "massage",
+    outfit: "מסאז'יסטית — חלוק ספא לבן קצר, שיער אסוף, יחפה. לקוח — שוכב על הבטן, מגבת בלבד.",
+    scene: "\"אתה מתוח מאוד... אני אדאג לך.\" ידיה יורדות מהגב לאט. המגבת \"מחליקה\". \"אוי, סליחה...\" — ולא ממהרת להחזיר. מתחילה לעבוד לו בפה. ממשיכים — הוא על הגב, היא יושבת עליו, חלוקה נפתח לגמרי, זיינת אותו חזק. שפיכה על הבטן — או שהיא מסיימת לו ביד על הפנים שלה."
+  }, {
+    id: "neighbor",
+    text: "🏠 שכנה לוהטת — השאלת סוכר",
+    photoKey: "neighbor",
+    outfit: "שכנה — גופייה בלי חזייה, מכנסי פיג'מה קצרים, יחפה. שכן — בוקסר ואוברול.",
+    scene: "\"יש לי צינור שזולג... ותמיד כשאני מתכופפת...\" — מתכופפת ומראה שאין כלום מתחת לפיג'מה. הוא נכנס \"לתקן\". היא עוזרת לו בדרכה — ברכיים במטבח. ממשיכים על הדלפק — היא יושבת, ירכיים פתוחות, הוא מזיין אותה בעמידה. שפיכה על הגופייה — או על הפנים שלה אם יורדת."
+  }, {
+    id: "repairman",
+    text: "🔧 השרברב ובעלת הבית",
+    photoKey: "repairman",
+    outfit: "היא — חלוק משי רפוי, תחרה מתחת, יחפה. הוא — חולצת עבודה, חגורת כלים, ג'ינס.",
+    scene: "\"הצינור זולג כבר ימים.\" הוא מתכופף מתחת לכיור. היא מביטה מאחורה. \"צריך עזרה?\" — ומתקרבת מדי. הוא קם, כמעט נוגע בה. היא מושכת אותו בצווארון. חגורת הכלים עדיין עליו. מציצה על רצפת המטבח. ממשיכים — היא נשענת על הדלפק מלפנים, הוא מזיין אותה מאחורה. שפיכה על הגב."
+  }, {
+    id: "stripper",
+    text: "💃 הרקדנית ולקוח — חדר VIP",
+    photoKey: "stripper",
+    outfit: "היא — ביקיני נצנצים, חצאית מיקרו, עקבי פלטפורמה, תחרה. הוא — חליפה, עניבה, כסף ביד.",
+    scene: "חדר VIP. היא מתחילה לרקוד — ידיה על החזה שלו, מסתובבת. \"מופע מיוחד הלילה.\" מתיישבת עליו על הכיסא, לאפ דאנס הופך בגוף. היא מושכת אותו בעניבה ויורדת לו למציצה עמוקה. ממשיכים — ריברס קאוגרל על הכיסא, זיון חזק. שפיכה על הביקיני הנצנץ — או על הפנים שלה."
+  }, {
+    id: "pornstars",
+    text: "🎬 כוכבי פורנו — משחק סצנה",
+    photoKey: "pornstars",
+    outfit: "היא — סט תחרה תואם, עקבים, איפור מלא. הוא — בגדי מינימום.",
+    scene: "\"מצלמה מוכנה.\" משחק מוגזם — גניחות תיאטרליות, תנוחות מבוימות. מיסיונרי תחילה, עמוק ואיטי. \"רגע, חתך — זווית חדשה.\" היא עולה עליו, מזיינת אותו לאט. הוא שופך לה על החזה בסוף — מבוים, דרמטי."
+  }, {
+    id: "filming",
+    text: "🎥 צילום ביתי — רק בינינו",
+    photoKey: "filming",
+    outfit: "היא — בייבי-דול שקוף, תחרה, או בלי כלום. הוא — בלי כלום.",
+    scene: "הטלפון מונח על השידה. \"את בסדר עם זה?\" מתחילים לאט — היא עולה עליו, מזיינת אותו, מביטה במצלמה. מתחלפים לדוגי — היא מסתובבת להביט בחזרה בטלפון. הוא שופך לה על הבטן. שניהם מביטים בסרטון אחרי. נשאר אצלהם בלבד."
+  }, {
+    id: "strangers",
+    text: "🍸 זרים בבר — הלילה הראשון",
+    photoKey: "strangers",
+    outfit: "היא — שמלת קוקטייל צמודה, עקבים, שפתון אדום. הוא — חולצה פתוחה, ג'ינס כהה.",
+    scene: "\"לא ראיתי אותך פה קודם.\" משתה, פלירט. \"אני גר קרוב.\" חדר מלון. היא דוחפת אותו על הקיר — נשיקות ואחיזה. הוא מרים אותה — שמלה מורמת, זיון על הקיר. ממשיכים על המיטה — מיסיונרי, קשר עין. שפיכה בתוכה — אינטימי."
+  }, {
+    id: "bdsm",
+    text: "⛓️ דומיננטית וסאבמיסיב — תשמע לי",
+    photoKey: "bdsm",
+    outfit: "דום — שחור מכף רגל ועד ראש, עור, עקבים, מבט שולט. סאב — קולר, ידיים כפותות ברצועות רכות, על הברכיים.",
+    scene: "\"אתה יודע את החוקים.\" הסאב ממתין, ראש למטה. הדום מסתובב לאט. \"תסתכל עלי.\" מציצה מבוקרת — הדום קובע קצב, ידיים בשיער. ממשיכים — הסאב כפות למיטה, זיון איטי ומחושב. שפיכה בתוכה רק ברשות הדום — הסאב מודה."
+  }, {
+    id: "voyeur",
+    text: "👁️ המציצן — ראיתי הכל",
+    photoKey: "voyeur",
+    outfit: "היא — לא יודעת שמסתכלים, בתחרה או מתפשטת. הוא — מביט מבחוץ, כמעט לא נראה.",
+    scene: "היא חושבת שהיא לבד — מתפשטת לאט, מתמתחת, מגעת בעצמה. הוא מביט דרך הדלת פתוחה לרווחה. היא שמה לב — ולא עוצרת. מזמינה אותו פנימה במבט. הוא נכנס, כמעט בלי מילה. מהיר ונחרץ — מאחורה בעמידה. שפיכה בחוץ על הגב ברגע האחרון."
+  }, {
+    id: "maid",
+    text: "🛎️ עוזרת חדר ואורח — שירות מיוחד",
+    photoKey: "maid",
+    outfit: "היא — מדי מלון, שמלה שחורה קצרה, סינר לבן, שיער אסוף. הוא — חלוק מלון, זה עתה מהמקלחת.",
+    scene: "\"שירות חדרים—\" הוא פותח לפני שהיא דופקת. \"כנסי.\" היא מתחילה לסדר. הוא מתקרב. \"תני לי לעזור לך.\" הוא מתיר לה את הסינר לאט. מציצה על מיטת המלון. ממשיכים — מיסיונרי, ואז ריברס קאוגרל. שפיכה על הסינר — או על הפנים שלה."
+  }, {
+    id: "cowboy",
+    text: "🤠 קאובוי ובחורה מהעיר",
+    photoKey: "cowboy",
+    outfit: "הוא — חולצת פלנל פתוחה, ג'ינס, מגפיים, כובע. היא — חולצת משי, חצאית, בבירור לא מכאן.",
+    scene: "\"בחורות מהעיר לא מגיעות לפה בדרך כלל.\" הוא נשען על האיסוף, לא רץ אחריה. היא מתקרבת. הוא לוקח את הפנים שלה, מנשק לאט. ממשיכים על מיטת האיסוף — היא עולה עליו קודם, מזיינת אותו, ואז הוא מסתובב — מיסיונרי. שפיכה בתוכה, בלי חיפזון."
+  }, {
+    id: "babysitter",
+    text: "🍼 הבייביסיטר — אחרי שהילדים ישנו",
+    photoKey: "babysitter",
+    outfit: "היא — קרופ טופ, שורט גבוה, שיער באנייה פרועה. הוא — קז'ואל, חוזר הביתה מאוחר.",
+    scene: "הילדים ישנים. הוא מגיע. היא על הספה. שיחה רגילה — אבל המבט נשאר שנייה יותר מדי. \"אסיע אותך הביתה.\" ברכב, חנוי ליד הבית. היא לא יוצאת. הוא מתכופף. היא מנשקת אותו קודמת. עוברים למושב האחורי — צפוף ואינטימי. היא עולה עליו, מזיינת אותו. שפיכה על הבטן, עדיין במושב האחורי."
+  }, {
+    id: "lawyer",
+    text: "⚖️ עורכת דין ולקוח — שעות נוספות",
+    photoKey: "lawyer",
+    outfit: "היא — חליפת עוצמה, חצאית עיפרון, עקבים, שיער מסוגנן. הוא — קז'ואל, לקוח עצבני.",
+    scene: "\"אני אוציא אותך מזה — אבל אני צריכה הכל.\" משרד זכוכית, ערב מאוחר. היא שוצלבת רגליים, מקישה בעט. היא מורידה את הווילונות. מציצה בכיסא המשרדי — הוא יושב, ידיים על המשענות. ממשיכים — היא נשענת על השולחן, חצאית מורמת, עקבים נשארים. שפיכה על הבלייזר — או על הפנים שלה אם יורדת."
+  }, {
+    id: "masquerade",
+    text: "🎭 נשף מסכות — בלי שמות הלילה",
+    photoKey: "masquerade",
+    outfit: "היא — שמלת ערב עם מחשוף, מסכה, כפפות. הוא — חליפה, מסכה, מסתורי.",
+    scene: "לא מחליפים שמות. עיניים מעבר לאולם. ריקוד איטי הופך לשיחה בפינה. \"אני יודע מי את.\" \"לא, לא יודע.\" הוא לוקח לה יד, מוביל לחדר הכניסה. הפשטה איטית ותיאטרלית — כפפות קודם, אז השמלה. זיון אינטימי ועז — פנים מול פנים, עמידה, ואז על הקיר. שפיכה על הפנים — מסכות עדיין עליהם."
+  }, {
+    id: "therapist",
+    text: "🛋️ הפסיכולוגית — זה לא אתי",
+    photoKey: "therapist",
+    outfit: "היא — בלייזר מחויט, שמלה צנועה, משקפיים, פנקס. הוא — על הספה, קז'ואל.",
+    scene: "\"ספר לי על החלום.\" היא כותבת לאט. הוא מביט בה. היא מניחה את הפנקס, מסירה את המשקפיים. \"זה לא אתי בכלל.\" קמה, ניגשת אליו. יורדת לו למציצה על ספת הטיפולים. ממשיכים — מיסיונרי, איטי ואינטימי. שפיכה בתוכה."
+  }, {
+    id: "catwoman",
+    text: "🐱 קאטוומן — אני שולטת הלילה",
+    photoKey: "catwoman",
+    outfit: "היא — חליפת לטקס שחורה צמודה, אוזני חתולה, מסכה, עקבים/מגפיים, שוט אופציונלי. הוא — קז'ואל, קצת פצוע.",
+    scene: "\"תפסתי אותך שוב.\" היא מסתובבת סביבו, מעבירה אצבע על הצווארון. הוא מנסה לקום. היא דוחפת אותו בחזרה. \"תשב.\" יורדת לו למציצה עמוקה — שולטת לגמרי, עיניים לא מרפות. ממשיכים — היא עולה עליו, כופתת לו את הידיים, מזיינת אותו חזק בקצב שלה. שפיכה על החזה — היא מחליטה מתי ואיפה. מחייכת ומסתלקת."
   }],
   recipe: ["1. בחרו תרחיש ביחד מהרשימה למעלה (או המציאו משלכם!)", "2. הכינו תלבושת פשוטה - לא חייבים להשקיע הרבה", "3. קבעו 'מילת עצירה' לפני שמתחילים", "4. הישארו בדמות כמה שיותר זמן - זה יוצר מתח!", "5. צחוק זה בסדר לגמרי - זה חלק מהכיף 😄"],
   link: "https://www.aliexpress.com/w/wholesale-costume-sexy.html"
@@ -4969,6 +5075,12 @@ function ItemScreen({
   const [slideIdx, setSlideIdx] = useState(0);
   const [showIdeaModal, setShowIdeaModal] = useState(false);
   const [lastIdeaIdx, setLastIdeaIdx] = useState(-1);
+  const [roleplayData, setRoleplayData] = useState({});
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editDraft, setEditDraft] = useState(null);
+  React.useEffect(() => {
+    fetch('roleplay.json').then(r => r.json()).then(setRoleplayData).catch(() => {});
+  }, []);
   React.useEffect(() => {
     if (!showIdeaModal || pickedSession.length <= 1) {
       setSlideIdx(0);
@@ -4978,6 +5090,30 @@ function ItemScreen({
     const t = setInterval(() => setSlideIdx(i => (i + 1) % pickedSession.length), 2000);
     return () => clearInterval(t);
   }, [showIdeaModal, pickedSession]);
+  const getEffIdea = idea => {
+    try {
+      const s = localStorage.getItem('rp_' + idea.id);
+      return s ? Object.assign({}, idea, JSON.parse(s)) : idea;
+    } catch (e) {
+      return idea;
+    }
+  };
+  const saveEdit = () => {
+    try {
+      localStorage.setItem('rp_' + editDraft.id, JSON.stringify({
+        text: editDraft.text,
+        outfit: editDraft.outfit,
+        scene: editDraft.scene
+      }));
+    } catch (e) {}
+    setShowEditModal(false);
+    setEditDraft(null);
+  };
+  const resetIdea = idea => {
+    try {
+      localStorage.removeItem('rp_' + idea.id);
+    } catch (e) {}
+  };
   const shuffleIdea = () => {
     if (!item.ideas || item.ideas.length === 0) return;
     let idx;
@@ -4985,9 +5121,8 @@ function ItemScreen({
       idx = Math.floor(Math.random() * item.ideas.length);
     } while (idx === lastIdeaIdx && item.ideas.length > 1);
     const idea = item.ideas[idx];
-    const allPhotos = idea.photos && idea.photos.length > 0 ? idea.photos : [];
-    const sessions = [];
-    for (let i = 0; i < allPhotos.length; i += 3) sessions.push(allPhotos.slice(i, i + 3));
+    const rpSessions = idea.photoKey && roleplayData[idea.photoKey];
+    const sessions = rpSessions && rpSessions.length > 0 ? rpSessions : [];
     const session = sessions.length > 0 ? sessions[Math.floor(Math.random() * sessions.length)] : [];
     setLastIdeaIdx(idx);
     setPickedIdea(idea);
@@ -5025,33 +5160,226 @@ function ItemScreen({
       display: "block",
       minHeight: 0
     }
-  }), /*#__PURE__*/React.createElement("div", {
+  }), pickedSession.length === 0 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontSize: 80
+    }
+  }, pickedIdea.text.slice(0, 2)), /*#__PURE__*/React.createElement("div", {
+    onClick: e => e.stopPropagation(),
     style: {
       background: "#111",
-      padding: "18px 20px",
-      direction: "rtl"
+      padding: "16px 20px",
+      direction: "rtl",
+      maxHeight: "50vh",
+      overflowY: "auto"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 10
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 17,
       fontWeight: "bold",
-      color: "#fff",
-      marginBottom: 8
+      color: "#fff"
     }
-  }, pickedIdea.text.slice(3)), /*#__PURE__*/React.createElement("div", {
+  }, getEffIdea(pickedIdea).text.slice(3)), /*#__PURE__*/React.createElement("button", {
+    onClick: () => {
+      setEditDraft(Object.assign({}, getEffIdea(pickedIdea)));
+      setShowEditModal(true);
+    },
+    style: {
+      background: "transparent",
+      border: "1px solid #555",
+      borderRadius: 8,
+      color: "#aaa",
+      fontSize: 14,
+      padding: "4px 10px",
+      cursor: "pointer",
+      flexShrink: 0
+    }
+  }, "✏️")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      color: "#888",
+      marginBottom: 8,
+      lineHeight: 1.6
+    }
+  }, "👗 ", getEffIdea(pickedIdea).outfit), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 14,
-      color: "#ccc",
+      color: "#ddd",
       lineHeight: 1.7
     }
-  }, pickedIdea.description), /*#__PURE__*/React.createElement("div", {
+  }, "💋 ", getEffIdea(pickedIdea).scene), /*#__PURE__*/React.createElement("div", {
     style: {
-      marginTop: 14,
+      marginTop: 12,
       textAlign: "center",
-      fontSize: 13,
-      color: "#666"
+      fontSize: 12,
+      color: "#555"
     }
-  }, "לחץ לסגירה"))), /*#__PURE__*/React.createElement("div", {
+  }, "לחץ מחוץ לטקסט לסגירה"))), showEditModal && editDraft && /*#__PURE__*/React.createElement("div", {
+    onClick: () => {
+      setShowEditModal(false);
+      setEditDraft(null);
+    },
+    style: {
+      position: "fixed",
+      inset: 0,
+      zIndex: 400,
+      background: "rgba(0,0,0,0.85)",
+      display: "flex",
+      alignItems: "flex-end"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    onClick: e => e.stopPropagation(),
+    style: {
+      background: "#1a1a1a",
+      width: "100%",
+      borderRadius: "20px 20px 0 0",
+      padding: "24px 20px",
+      maxHeight: "85vh",
+      overflowY: "auto",
+      direction: "rtl",
+      boxSizing: "border-box"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: "#fff",
+      marginBottom: 20
+    }
+  }, "✏️ עריכת תרחיש"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: "#aaa",
+      fontSize: 12,
+      marginBottom: 4
+    }
+  }, "כותרת"), /*#__PURE__*/React.createElement("input", {
+    value: editDraft.text,
+    onChange: e => setEditDraft(Object.assign({}, editDraft, {
+      text: e.target.value
+    })),
+    style: {
+      width: "100%",
+      background: "#2a2a2a",
+      color: "#fff",
+      border: "1px solid #444",
+      borderRadius: 10,
+      padding: "10px 12px",
+      fontSize: 14,
+      marginBottom: 14,
+      direction: "rtl",
+      boxSizing: "border-box"
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: "#aaa",
+      fontSize: 12,
+      marginBottom: 4
+    }
+  }, "👗 לבוש"), /*#__PURE__*/React.createElement("textarea", {
+    value: editDraft.outfit,
+    onChange: e => setEditDraft(Object.assign({}, editDraft, {
+      outfit: e.target.value
+    })),
+    rows: 3,
+    style: {
+      width: "100%",
+      background: "#2a2a2a",
+      color: "#fff",
+      border: "1px solid #444",
+      borderRadius: 10,
+      padding: "10px 12px",
+      fontSize: 14,
+      marginBottom: 14,
+      direction: "rtl",
+      resize: "vertical",
+      boxSizing: "border-box"
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: "#aaa",
+      fontSize: 12,
+      marginBottom: 4
+    }
+  }, "💋 סצנה"), /*#__PURE__*/React.createElement("textarea", {
+    value: editDraft.scene,
+    onChange: e => setEditDraft(Object.assign({}, editDraft, {
+      scene: e.target.value
+    })),
+    rows: 6,
+    style: {
+      width: "100%",
+      background: "#2a2a2a",
+      color: "#fff",
+      border: "1px solid #444",
+      borderRadius: 10,
+      padding: "10px 12px",
+      fontSize: 14,
+      marginBottom: 20,
+      direction: "rtl",
+      resize: "vertical",
+      boxSizing: "border-box"
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: saveEdit,
+    style: {
+      flex: 1,
+      background: "#800040",
+      color: "#fff",
+      border: "none",
+      borderRadius: 12,
+      padding: "12px",
+      fontSize: 15,
+      fontWeight: "bold",
+      cursor: "pointer"
+    }
+  }, "שמור"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => {
+      resetIdea(editDraft);
+      setShowEditModal(false);
+      setEditDraft(null);
+    },
+    style: {
+      flex: 1,
+      background: "#333",
+      color: "#ccc",
+      border: "none",
+      borderRadius: 12,
+      padding: "12px",
+      fontSize: 15,
+      cursor: "pointer"
+    }
+  }, "אפס"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => {
+      setShowEditModal(false);
+      setEditDraft(null);
+    },
+    style: {
+      flex: 1,
+      background: "#222",
+      color: "#888",
+      border: "none",
+      borderRadius: 12,
+      padding: "12px",
+      fontSize: 15,
+      cursor: "pointer"
+    }
+  }, "ביטול")))), /*#__PURE__*/React.createElement("div", {
     style: {
       position: "relative"
     }
@@ -5263,8 +5591,8 @@ function ItemScreen({
       border: `1px solid ${T.border}`,
       boxShadow: "0 2px 10px rgba(0,0,0,0.08)"
     }
-  }, pickedPhoto ? /*#__PURE__*/React.createElement("img", {
-    src: pickedPhoto,
+  }, pickedSession.length > 0 ? /*#__PURE__*/React.createElement("img", {
+    src: pickedSession[0],
     alt: "",
     onClick: () => setShowIdeaModal(true),
     style: {
@@ -5275,13 +5603,15 @@ function ItemScreen({
       cursor: "zoom-in"
     }
   }) : /*#__PURE__*/React.createElement("div", {
+    onClick: () => setShowIdeaModal(true),
     style: {
       height: 140,
       background: "linear-gradient(135deg, #4a0030, #800040)",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      fontSize: 56
+      fontSize: 56,
+      cursor: "pointer"
     }
   }, pickedIdea.text.slice(0, 2)), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -5292,17 +5622,24 @@ function ItemScreen({
       color: T.text,
       lineHeight: 1.4
     }
-  }, pickedIdea.text.slice(3)), pickedIdea.description && /*#__PURE__*/React.createElement("div", {
+  }, getEffIdea(pickedIdea).text.slice(3)), (getEffIdea(pickedIdea).outfit || getEffIdea(pickedIdea).scene) && /*#__PURE__*/React.createElement("div", {
+    onClick: () => setShowIdeaModal(true),
     style: {
       padding: "10px 16px 14px",
-      fontSize: 14,
+      fontSize: 13,
       color: T.textS,
       lineHeight: 1.6,
       borderTop: `1px solid ${T.border}`,
       textAlign: "right",
-      direction: "rtl"
+      direction: "rtl",
+      cursor: "pointer"
     }
-  }, pickedIdea.description)))), item.ingredients && item.ingredients.length > 0 && /*#__PURE__*/React.createElement(Section, {
+  }, getEffIdea(pickedIdea).outfit && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: 6,
+      color: T.textS
+    }
+  }, "👗 ", getEffIdea(pickedIdea).outfit), getEffIdea(pickedIdea).scene && /*#__PURE__*/React.createElement("div", null, "💋 ", getEffIdea(pickedIdea).scene))))), item.ingredients && item.ingredients.length > 0 && /*#__PURE__*/React.createElement(Section, {
     title: "\uD83D\uDED2 \u05DE\u05D4 \u05E6\u05E8\u05D9\u05DA \u05DC\u05E7\u05E0\u05D5\u05EA"
   }, /*#__PURE__*/React.createElement("div", {
     style: {

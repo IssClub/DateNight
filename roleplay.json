@@ -1,0 +1,28 @@
+{
+  "boss": [
+    [
+      "img/roleplay/boss.jpg"
+    ]
+  ],
+  "gala": [
+    [
+      "img/roleplay/gala.jpg"
+    ]
+  ],
+  "nurse": [
+    [
+      "img/roleplay/nurse.jpg"
+    ]
+  ],
+  "pizza": [
+    [
+      "img/roleplay/pizza.jpg"
+    ]
+  ],
+  "stewardess": [
+    [
+      "img/roleplay/stewardess.jpg",
+      "img/roleplay/stewardess2.jpg"
+    ]
+  ]
+}
