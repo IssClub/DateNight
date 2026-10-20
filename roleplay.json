@@ -1,28 +1,28 @@
 {
   "boss": [
     [
-      "img/roleplay/boss.jpg"
+      "img/roleplay/boss/boss.jpg"
     ]
   ],
-  "gala": [
+  "flight": [
     [
-      "img/roleplay/gala.jpg"
+      "img/roleplay/flight/stewardess.jpg",
+      "img/roleplay/flight/stewardess2.jpg"
     ]
   ],
   "nurse": [
     [
-      "img/roleplay/nurse.jpg"
+      "img/roleplay/nurse/nurse.jpg"
     ]
   ],
   "pizza": [
     [
-      "img/roleplay/pizza.jpg"
+      "img/roleplay/pizza/pizza.jpg"
     ]
   ],
-  "stewardess": [
+  "waiter": [
     [
-      "img/roleplay/stewardess.jpg",
-      "img/roleplay/stewardess2.jpg"
+      "img/roleplay/waiter/gala.jpg"
     ]
   ]
 }
