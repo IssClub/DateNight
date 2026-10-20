@@ -39,6 +39,12 @@ const result = babel.transform(jsxCode, {
   filename: 'app.jsx',
 });
 
+// 3b. Inject build timestamp
+const now = new Date();
+const pad = n => String(n).padStart(2, '0');
+const buildTs = `${pad(now.getDate())}.${pad(now.getMonth()+1)}.${String(now.getFullYear()).slice(2)} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+result.code = result.code.replace('"BUILD_TS"', `"${buildTs}"`);
+
 // 4. Replace <script type="text/babel">...</script> with compiled output
 content = content.slice(0, startIdx)
   + '<script>\n'

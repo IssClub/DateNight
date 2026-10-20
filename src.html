@@ -386,6 +386,7 @@ body.positions-open #positions-book-overlay {
   <div id="root"></div>
 
 <script type="text/babel">
+const BUILD_TS = "BUILD_TS";
 const {
   useState,
   useCallback,
@@ -7090,7 +7091,12 @@ function SettingsScreen({ darkMode, setDarkMode, goHome }) {
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(/*#__PURE__*/React.createElement(DateNight, null));
+root.render(/*#__PURE__*/React.createElement(React.Fragment, null,
+  /*#__PURE__*/React.createElement(DateNight, null),
+  /*#__PURE__*/React.createElement("div", {
+    style: { position: "fixed", bottom: 4, left: 6, fontSize: 9, color: "rgba(0,0,0,0.18)", zIndex: 9999, pointerEvents: "none", userSelect: "none", fontFamily: "monospace" }
+  }, BUILD_TS)
+));
 </script>
 
 <!-- ── Positions Book Overlay ── -->
