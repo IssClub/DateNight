@@ -4953,6 +4953,7 @@ function ItemScreen({
   const [showPinModal, setShowPinModal] = useState(false);
   const [pickedIdea, setPickedIdea] = useState(null);
   const [pickedPhoto, setPickedPhoto] = useState(null);
+  const [showIdeaModal, setShowIdeaModal] = useState(false);
   const [lastIdeaIdx, setLastIdeaIdx] = useState(-1);
   const shuffleIdea = () => {
     if (!item.ideas || item.ideas.length === 0) return;
@@ -4978,7 +4979,53 @@ function ItemScreen({
   }, showPinModal && /*#__PURE__*/React.createElement(PinDateModal, {
     item: item,
     onClose: () => setShowPinModal(false)
+  }), showIdeaModal && pickedIdea && /*#__PURE__*/React.createElement("div", {
+    onClick: () => setShowIdeaModal(false),
+    style: {
+      position: "fixed",
+      inset: 0,
+      zIndex: 300,
+      background: "#000",
+      display: "flex",
+      flexDirection: "column"
+    }
+  }, pickedPhoto && /*#__PURE__*/React.createElement("img", {
+    src: pickedPhoto,
+    alt: "",
+    style: {
+      flex: 1,
+      width: "100%",
+      objectFit: "contain",
+      display: "block",
+      minHeight: 0
+    }
   }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#111",
+      padding: "18px 20px",
+      direction: "rtl"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 17,
+      fontWeight: "bold",
+      color: "#fff",
+      marginBottom: 8
+    }
+  }, pickedIdea.text.slice(3)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 14,
+      color: "#ccc",
+      lineHeight: 1.7
+    }
+  }, pickedIdea.description), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 14,
+      textAlign: "center",
+      fontSize: 13,
+      color: "#666"
+    }
+  }, "לחץ לסגירה"))), /*#__PURE__*/React.createElement("div", {
     style: {
       position: "relative"
     }
@@ -5193,11 +5240,13 @@ function ItemScreen({
   }, pickedPhoto ? /*#__PURE__*/React.createElement("img", {
     src: pickedPhoto,
     alt: "",
+    onClick: () => setShowIdeaModal(true),
     style: {
       width: "100%",
       maxHeight: 220,
       objectFit: "cover",
-      display: "block"
+      display: "block",
+      cursor: "zoom-in"
     }
   }) : /*#__PURE__*/React.createElement("div", {
     style: {
