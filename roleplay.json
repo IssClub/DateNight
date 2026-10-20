@@ -4,12 +4,45 @@
       "img/roleplay/boss/boss.jpg"
     ]
   ],
+  "catwoman": [
+    [
+      "img/roleplay/catwoman/01.jpg",
+      "img/roleplay/catwoman/02.jpg",
+      "img/roleplay/catwoman/03.jpg",
+      "img/roleplay/catwoman/04.jpg"
+    ]
+  ],
   "flight": [
     [
-      "img/roleplay/flight/1/stewardess.jpg"
+      "img/roleplay/flight/1/01.jpg",
+      "img/roleplay/flight/1/02.jpg",
+      "img/roleplay/flight/1/03.jpg"
     ],
     [
-      "img/roleplay/flight/2/stewardess2.jpg"
+      "img/roleplay/flight/2/01.jpg",
+      "img/roleplay/flight/2/02.jpg",
+      "img/roleplay/flight/2/03.jpg"
+    ],
+    [
+      "img/roleplay/flight/3/01.jpg",
+      "img/roleplay/flight/3/02.jpg",
+      "img/roleplay/flight/3/03.jpg"
+    ]
+  ],
+  "massage": [
+    [
+      "img/roleplay/massage/01.jpg",
+      "img/roleplay/massage/02.jpg",
+      "img/roleplay/massage/03.jpg",
+      "img/roleplay/massage/04.jpg"
+    ]
+  ],
+  "neighbor": [
+    [
+      "img/roleplay/neighbor/01.jpg",
+      "img/roleplay/neighbor/02.jpg",
+      "img/roleplay/neighbor/03.jpg",
+      "img/roleplay/neighbor/04.jpg"
     ]
   ],
   "nurse": [
