@@ -3631,28 +3631,36 @@ const ADULTS = [{
   why: "בחרו תרחיש ביחד - הציפייה והמתח שווים הכל!",
   ideas: [{
     text: "🏥 רופא/ה ומטופל/ת — הבדיקה שתשנה הכל",
-    photo: "img/roleplay/nurse.jpg"
+    photos: ["img/roleplay/nurse.jpg"],
+    description: "👗 גלימה לבנה (או בלי) + מטופל/ת שוכב/ת רק עם תחתונים. 💋 הבדיקה מתחילה בנורמלי — ומסתיימת בצעקות שהשכנים ישמעו."
   }, {
     text: "👔 בוס ומזכיר/ה — שעות נוספות במשרד",
-    photo: "img/roleplay/boss.jpg"
+    photos: ["img/roleplay/boss.jpg"],
+    description: "👗 חולצה לבנה פתוחה, עניבה, עקבים שחורים. 💋 הבוס סוגר/ת את הדלת: 'נדון בהערכת הביצועים שלך על השולחן.'"
   }, {
     text: "🕵️ חוקר/ת ועד — חקירה בחדר חשוך",
-    photo: null
+    photos: [],
+    description: "👗 חולצה כהה, מכנסיים צמודים, פנס קטן. 💋 הנחקר/ת כפות לכיסא — הוא/היא יחשוף הכל, בין אם ירצה/תרצה ובין אם לא."
   }, {
     text: "🧑‍🏫 מורה ותלמיד/ה — שיעור פרטי",
-    photo: null
+    photos: [],
+    description: "👗 חצאית קצרה / מכנסי ספורט, עיפרון מאחורי האוזן. 💋 התלמיד/ה לא עשה/תה שיעורים — העונש מותאם אישית."
   }, {
     text: "🍕 שליח/ת פיצה — אין כסף לשלם, מה עושים?",
-    photo: null
+    photos: ["img/roleplay/pizza.jpg"],
+    description: "👗 כל בגד יומיומי + קופסת פיצה ריקה. 💋 'אין לי מזומן...' — חיוך קטן — '...אבל אולי נסדר את זה אחרת?'"
   }, {
     text: "✈️ סטיוארד/ית ונוסע — טיסת לילה ארוכה",
-    photo: null
+    photos: ["img/roleplay/flight.jpg", "img/roleplay/flight2.jpg"],
+    description: "👗 חולצת כפתורים / שמלה צמודה + עניבה קטנה. 💋 'הנוסע/ת מרגיש/ה לא טוב... אני אבוא לבדוק אחרי שכולם יישנו.'"
   }, {
     text: "🤵 עשיר/ה ומלצר/ית — ערב גאלה בלעדי",
-    photo: "img/roleplay/gala.jpg"
+    photos: ["img/roleplay/gala.jpg"],
+    description: "👗 שמלת ערב שחורה / חליפה + סינר קטן, נרות דולקים. 💋 המלצר/ית נשאר/ת אחרי שהאורחים הלכו. שולחן אחד, נר אחד, אפשרויות אינסוף."
   }, {
     text: "👠 המפתה והתמים/ה — מי מנצח?",
-    photo: null
+    photos: [],
+    description: "👗 הלבוש הכי סקסי שיש לכם. 💋 אחד/ת מנסה לפתות, השני/ה מתנגד/ת — עד שלא מתנגד/ת יותר."
   }],
   recipe: ["1. בחרו תרחיש ביחד מהרשימה למעלה (או המציאו משלכם!)", "2. הכינו תלבושת פשוטה - לא חייבים להשקיע הרבה", "3. קבעו 'מילת עצירה' לפני שמתחילים", "4. הישארו בדמות כמה שיותר זמן - זה יוצר מתח!", "5. צחוק זה בסדר לגמרי - זה חלק מהכיף 😄"],
   link: "https://www.aliexpress.com/w/wholesale-costume-sexy.html"
@@ -4944,6 +4952,7 @@ function ItemScreen({
   const isFav = item ? favorites.includes(item.id) : false;
   const [showPinModal, setShowPinModal] = useState(false);
   const [pickedIdea, setPickedIdea] = useState(null);
+  const [pickedPhoto, setPickedPhoto] = useState(null);
   const [lastIdeaIdx, setLastIdeaIdx] = useState(-1);
   const shuffleIdea = () => {
     if (!item.ideas || item.ideas.length === 0) return;
@@ -4951,8 +4960,12 @@ function ItemScreen({
     do {
       idx = Math.floor(Math.random() * item.ideas.length);
     } while (idx === lastIdeaIdx && item.ideas.length > 1);
+    const idea = item.ideas[idx];
+    const photos = idea.photos && idea.photos.length > 0 ? idea.photos : [];
+    const photo = photos.length > 0 ? photos[Math.floor(Math.random() * photos.length)] : null;
     setLastIdeaIdx(idx);
-    setPickedIdea(item.ideas[idx]);
+    setPickedIdea(idea);
+    setPickedPhoto(photo);
   };
   if (!item) return null;
   return /*#__PURE__*/React.createElement("div", {
@@ -5177,8 +5190,8 @@ function ItemScreen({
       border: `1px solid ${T.border}`,
       boxShadow: "0 2px 10px rgba(0,0,0,0.08)"
     }
-  }, pickedIdea.photo ? /*#__PURE__*/React.createElement("img", {
-    src: pickedIdea.photo,
+  }, pickedPhoto ? /*#__PURE__*/React.createElement("img", {
+    src: pickedPhoto,
     alt: "",
     style: {
       width: "100%",
@@ -5204,7 +5217,17 @@ function ItemScreen({
       color: T.text,
       lineHeight: 1.4
     }
-  }, pickedIdea.text.slice(3))))), item.ingredients && item.ingredients.length > 0 && /*#__PURE__*/React.createElement(Section, {
+  }, pickedIdea.text.slice(3)), pickedIdea.description && /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "10px 16px 14px",
+      fontSize: 14,
+      color: T.textS,
+      lineHeight: 1.6,
+      borderTop: `1px solid ${T.border}`,
+      textAlign: "right",
+      direction: "rtl"
+    }
+  }, pickedIdea.description)))), item.ingredients && item.ingredients.length > 0 && /*#__PURE__*/React.createElement(Section, {
     title: "\uD83D\uDED2 \u05DE\u05D4 \u05E6\u05E8\u05D9\u05DA \u05DC\u05E7\u05E0\u05D5\u05EA"
   }, /*#__PURE__*/React.createElement("div", {
     style: {
