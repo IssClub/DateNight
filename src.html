@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -3561,7 +3561,16 @@ const ADULTS = [{
   emoji: "🎭",
   babysitter: false,
   why: "בחרו תרחיש ביחד - הציפייה והמתח שווים הכל!",
-  ideas: ["🏥 רופא/ה ומטופל/ת — הבדיקה שתשנה הכל", "👔 בוס ומזכיר/ה — שעות נוספות במשרד", "🕵️ חוקר/ת ועד — חקירה בחדר חשוך", "🧑‍🏫 מורה ותלמיד/ה — שיעור פרטי", "🍕 שליח/ת פיצה — אין כסף לשלם, מה עושים?", "✈️ סטיוארד/ית ונוסע — טיסת לילה ארוכה", "🤵 עשיר/ה ומלצר/ית — ערב גאלה בלעדי", "👠 המפתה והתמים/ה — מי מנצח?"],
+  ideas: [
+    { text: "🏥 רופא/ה ומטופל/ת — הבדיקה שתשנה הכל", photo: null },
+    { text: "👔 בוס ומזכיר/ה — שעות נוספות במשרד", photo: null },
+    { text: "🕵️ חוקר/ת ועד — חקירה בחדר חשוך", photo: null },
+    { text: "🧑‍🏫 מורה ותלמיד/ה — שיעור פרטי", photo: null },
+    { text: "🍕 שליח/ת פיצה — אין כסף לשלם, מה עושים?", photo: null },
+    { text: "✈️ סטיוארד/ית ונוסע — טיסת לילה ארוכה", photo: null },
+    { text: "🤵 עשיר/ה ומלצר/ית — ערב גאלה בלעדי", photo: null },
+    { text: "👠 המפתה והתמים/ה — מי מנצח?", photo: null }
+  ],
   recipe: ["1. בחרו תרחיש ביחד מהרשימה למעלה (או המציאו משלכם!)", "2. הכינו תלבושת פשוטה - לא חייבים להשקיע הרבה", "3. קבעו 'מילת עצירה' לפני שמתחילים", "4. הישארו בדמות כמה שיותר זמן - זה יוצר מתח!", "5. צחוק זה בסדר לגמרי - זה חלק מהכיף 😄"],
   link: "https://www.aliexpress.com/w/wholesale-costume-sexy.html"
 }, {
@@ -4291,7 +4300,7 @@ const CATEGORIES = [{
   subcats: ["cooking", "homemovie", "homeseries", "games", "homegames"]
 }, {
   id: "intimate",
-  label: "זוגי אינטימי",
+  label: "Playtime",
   icon: "💕",
   color: "#b888a0",
   subcats: ["adults"]
@@ -4851,6 +4860,16 @@ function ItemScreen({
   } = useSwipeBack(onBack);
   const isFav = item ? favorites.includes(item.id) : false;
   const [showPinModal, setShowPinModal] = useState(false);
+  const [pickedIdea, setPickedIdea] = useState(null);
+  const [lastIdeaIdx, setLastIdeaIdx] = useState(-1);
+  const shuffleIdea = () => {
+    if (!item.ideas || item.ideas.length === 0) return;
+    let idx;
+    do { idx = Math.floor(Math.random() * item.ideas.length); }
+    while (idx === lastIdeaIdx && item.ideas.length > 1);
+    setLastIdeaIdx(idx);
+    setPickedIdea(item.ideas[idx]);
+  };
   if (!item) return null;
   return /*#__PURE__*/React.createElement("div", {
     ref: swipeRef,
@@ -5041,19 +5060,67 @@ function ItemScreen({
       border: `1px solid ${T.border}`
     }
   }, t)))), item.ideas && item.ideas.length > 0 && /*#__PURE__*/React.createElement(Section, {
-    title: "\uD83C\uDFAD \u05EA\u05E8\u05D7\u05D9\u05E9\u05D9\u05DD \u05DE\u05D5\u05DE\u05DC\u05E6\u05D9\u05DD"
+    title: "\uD83C\uDFAD \u05DE\u05E9\u05D7\u05E7\u05D9 \u05EA\u05E4\u05E7\u05D9\u05D3\u05D9\u05DD"
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
-      flexWrap: "wrap",
-      gap: 8
+      flexDirection: "column",
+      gap: 12
     }
-  }, item.ideas.map((d, i) => /*#__PURE__*/React.createElement(Tag, {
-    key: i,
-    text: d,
-    color: "#ffe4e6",
-    textColor: "#9f1239"
-  })))), item.ingredients && item.ingredients.length > 0 && /*#__PURE__*/React.createElement(Section, {
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: shuffleIdea,
+    style: {
+      background: "linear-gradient(135deg, #800040, #4a0030)",
+      color: "#fff",
+      border: "none",
+      borderRadius: 16,
+      padding: "14px 24px",
+      fontSize: 17,
+      fontWeight: "bold",
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 10,
+      width: "100%",
+      boxShadow: "0 4px 14px rgba(128,0,64,0.35)"
+    }
+  }, "\uD83C\uDFB2 \u05E2\u05E8\u05D1\u05D1 \u05EA\u05E8\u05D7\u05D9\u05E9"), pickedIdea && /*#__PURE__*/React.createElement("div", {
+    style: {
+      borderRadius: 18,
+      overflow: "hidden",
+      background: T.card,
+      border: `1px solid ${T.border}`,
+      boxShadow: "0 2px 10px rgba(0,0,0,0.08)"
+    }
+  }, pickedIdea.photo ? /*#__PURE__*/React.createElement("img", {
+    src: pickedIdea.photo,
+    alt: "",
+    style: {
+      width: "100%",
+      maxHeight: 220,
+      objectFit: "cover",
+      display: "block"
+    }
+  }) : /*#__PURE__*/React.createElement("div", {
+    style: {
+      height: 140,
+      background: "linear-gradient(135deg, #4a0030, #800040)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontSize: 56
+    }
+  }, pickedIdea.text.slice(0, 2)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "14px 16px",
+      textAlign: "center",
+      fontSize: 18,
+      fontWeight: "bold",
+      color: T.text,
+      lineHeight: 1.4
+    }
+  }, pickedIdea.text.slice(3))))), item.ingredients && item.ingredients.length > 0 && /*#__PURE__*/React.createElement(Section, {
     title: "\uD83D\uDED2 \u05DE\u05D4 \u05E6\u05E8\u05D9\u05DA \u05DC\u05E7\u05E0\u05D5\u05EA"
   }, /*#__PURE__*/React.createElement("div", {
     style: {
