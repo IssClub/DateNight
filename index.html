@@ -4965,8 +4965,19 @@ function ItemScreen({
   const [showPinModal, setShowPinModal] = useState(false);
   const [pickedIdea, setPickedIdea] = useState(null);
   const [pickedPhoto, setPickedPhoto] = useState(null);
+  const [pickedSession, setPickedSession] = useState([]);
+  const [slideIdx, setSlideIdx] = useState(0);
   const [showIdeaModal, setShowIdeaModal] = useState(false);
   const [lastIdeaIdx, setLastIdeaIdx] = useState(-1);
+  React.useEffect(() => {
+    if (!showIdeaModal || pickedSession.length <= 1) {
+      setSlideIdx(0);
+      return;
+    }
+    setSlideIdx(0);
+    const t = setInterval(() => setSlideIdx(i => (i + 1) % pickedSession.length), 2000);
+    return () => clearInterval(t);
+  }, [showIdeaModal, pickedSession]);
   const shuffleIdea = () => {
     if (!item.ideas || item.ideas.length === 0) return;
     let idx;
@@ -4974,11 +4985,14 @@ function ItemScreen({
       idx = Math.floor(Math.random() * item.ideas.length);
     } while (idx === lastIdeaIdx && item.ideas.length > 1);
     const idea = item.ideas[idx];
-    const photos = idea.photos && idea.photos.length > 0 ? idea.photos : [];
-    const photo = photos.length > 0 ? photos[Math.floor(Math.random() * photos.length)] : null;
+    const allPhotos = idea.photos && idea.photos.length > 0 ? idea.photos : [];
+    const sessions = [];
+    for (let i = 0; i < allPhotos.length; i += 3) sessions.push(allPhotos.slice(i, i + 3));
+    const session = sessions.length > 0 ? sessions[Math.floor(Math.random() * sessions.length)] : [];
     setLastIdeaIdx(idx);
     setPickedIdea(idea);
-    setPickedPhoto(photo);
+    setPickedSession(session);
+    setPickedPhoto(session.length > 0 ? session[0] : null);
   };
   if (!item) return null;
   return /*#__PURE__*/React.createElement("div", {
@@ -5001,8 +5015,8 @@ function ItemScreen({
       display: "flex",
       flexDirection: "column"
     }
-  }, pickedPhoto && /*#__PURE__*/React.createElement("img", {
-    src: pickedPhoto,
+  }, pickedSession.length > 0 && /*#__PURE__*/React.createElement("img", {
+    src: pickedSession[slideIdx],
     alt: "",
     style: {
       flex: 1,
