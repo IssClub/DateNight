@@ -1,7 +1,15 @@
 {
   "boss": [
     [
-      "img/roleplay/boss/boss.jpg"
+      "img/roleplay/boss/1/01.jpg",
+      "img/roleplay/boss/1/02.jpg",
+      "img/roleplay/boss/1/03.jpg",
+      "img/roleplay/boss/1/04.jpg",
+      "img/roleplay/boss/1/05.jpg",
+      "img/roleplay/boss/1/06.jpg",
+      "img/roleplay/boss/1/07.jpg",
+      "img/roleplay/boss/1/08.jpg",
+      "img/roleplay/boss/1/09.jpg"
     ]
   ],
   "catwoman": [
@@ -38,10 +46,20 @@
   ],
   "massage": [
     [
-      "img/roleplay/massage/01.jpg",
-      "img/roleplay/massage/02.jpg",
-      "img/roleplay/massage/03.jpg",
-      "img/roleplay/massage/04.jpg"
+      "img/roleplay/massage/1/01.jpg",
+      "img/roleplay/massage/1/02.jpg",
+      "img/roleplay/massage/1/03.jpg",
+      "img/roleplay/massage/1/04.jpg"
+    ],
+    [
+      "img/roleplay/massage/2/01.jpg",
+      "img/roleplay/massage/2/02.jpg",
+      "img/roleplay/massage/2/03.jpg",
+      "img/roleplay/massage/2/04.jpg",
+      "img/roleplay/massage/2/05.jpg",
+      "img/roleplay/massage/2/06.jpg",
+      "img/roleplay/massage/2/07.jpg",
+      "img/roleplay/massage/2/08.jpg"
     ]
   ],
   "neighbor": [
@@ -54,7 +72,36 @@
   ],
   "nurse": [
     [
-      "img/roleplay/nurse/nurse.jpg"
+      "img/roleplay/nurse/1/01.jpg",
+      "img/roleplay/nurse/1/02.jpg",
+      "img/roleplay/nurse/1/03.jpg",
+      "img/roleplay/nurse/1/04.jpg",
+      "img/roleplay/nurse/1/05.jpg",
+      "img/roleplay/nurse/1/06.jpg",
+      "img/roleplay/nurse/1/07.jpg"
+    ],
+    [
+      "img/roleplay/nurse/2/01.jpg",
+      "img/roleplay/nurse/2/02.jpg",
+      "img/roleplay/nurse/2/03.jpg",
+      "img/roleplay/nurse/2/04.jpg",
+      "img/roleplay/nurse/2/05.jpg"
+    ],
+    [
+      "img/roleplay/nurse/3/01.jpg",
+      "img/roleplay/nurse/3/02.jpg",
+      "img/roleplay/nurse/3/03.jpg",
+      "img/roleplay/nurse/3/04.jpg",
+      "img/roleplay/nurse/3/05.jpg",
+      "img/roleplay/nurse/3/06.jpg"
+    ],
+    [
+      "img/roleplay/nurse/4/01.jpg",
+      "img/roleplay/nurse/4/02.jpg",
+      "img/roleplay/nurse/4/03.jpg",
+      "img/roleplay/nurse/4/04.jpg",
+      "img/roleplay/nurse/4/05.jpg",
+      "img/roleplay/nurse/4/06.jpg"
     ]
   ],
   "pizza": [
