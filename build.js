@@ -81,42 +81,40 @@ if (fs.existsSync(gifDir)) {
 }
 
 // 8. Auto-regenerate roleplay.json from img/roleplay/ structure
+// Structure: img/roleplay/<scenario>/          → single session (direct files)
+//            img/roleplay/<scenario>/1/        → session 1
+//            img/roleplay/<scenario>/2/        → session 2
 const rpDir = path.join(__dirname, 'img', 'roleplay');
 if (fs.existsSync(rpDir)) {
   const roleplays = {};
-  const entries = fs.readdirSync(rpDir);
-  // Group direct files: stewardess.jpg + stewardess2.jpg → same session
-  const directFiles = entries.filter(e => {
-    try { return fs.statSync(path.join(rpDir, e)).isFile() && /\.(jpg|jpeg|png|webp)$/i.test(e); } catch { return false; }
-  });
-  const fileGroups = {};
-  directFiles.forEach(file => {
-    const base = file.replace(/\.[^.]+$/, '');
-    const m = base.match(/^(.+?)(\d+)$/);
-    const key = m ? m[1].toLowerCase() : base.toLowerCase();
-    if (!fileGroups[key]) fileGroups[key] = [];
-    fileGroups[key].push(file);
-  });
-  Object.entries(fileGroups).forEach(([key, files]) => {
-    files.sort();
-    roleplays[key] = [files.map(f => `img/roleplay/${f}`)];
-  });
-  entries.filter(e => {
+  const scenarioDirs = fs.readdirSync(rpDir).filter(e => {
     try { return fs.statSync(path.join(rpDir, e)).isDirectory(); } catch { return false; }
-  }).forEach(dir => {
-    const photos = fs.readdirSync(path.join(rpDir, dir))
+  });
+  scenarioDirs.forEach(scenario => {
+    const scenarioPath = path.join(rpDir, scenario);
+    const children = fs.readdirSync(scenarioPath);
+    const subDirs = children.filter(e => {
+      try { return fs.statSync(path.join(scenarioPath, e)).isDirectory(); } catch { return false; }
+    });
+    const directPhotos = children
       .filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f))
       .sort()
-      .map(f => `img/roleplay/${dir}/${f}`);
-    if (!photos.length) return;
-    const match = dir.match(/^(.+?)(\d+)$/);
-    if (match) {
-      const key = match[1].toLowerCase();
-      const idx = parseInt(match[2]) - 1;
-      if (!roleplays[key]) roleplays[key] = [];
-      roleplays[key][idx] = photos;
-    } else {
-      roleplays[dir.toLowerCase()] = [photos];
+      .map(f => `img/roleplay/${scenario}/${f}`);
+    if (subDirs.length > 0) {
+      // Multiple sessions: numbered subfolders 1/, 2/, 3/...
+      const sessions = subDirs
+        .filter(d => /^\d+$/.test(d))
+        .sort((a, b) => parseInt(a) - parseInt(b))
+        .map(d => fs.readdirSync(path.join(scenarioPath, d))
+          .filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f))
+          .sort()
+          .map(f => `img/roleplay/${scenario}/${d}/${f}`)
+        )
+        .filter(s => s.length > 0);
+      if (sessions.length > 0) roleplays[scenario] = sessions;
+    } else if (directPhotos.length > 0) {
+      // Single session: photos directly in scenario folder
+      roleplays[scenario] = [directPhotos];
     }
   });
   Object.keys(roleplays).forEach(k => { roleplays[k] = roleplays[k].filter(Boolean); });
