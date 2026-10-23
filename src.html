@@ -3639,7 +3639,7 @@ const ADULTS = [{
       outfit: "היא — חליפת לטקס שחורה צמודה, אוזני חתולה, מסכה, עקבים/מגפיים, שוט אופציונלי. הוא — קז'ואל, קצת פצוע.",
       scene: "\"תפסתי אותך שוב.\" היא מסתובבת סביבו, מעבירה אצבע על הצווארון. הוא מנסה לקום. היא דוחפת אותו בחזרה. \"תשב.\" יורדת לו למציצה עמוקה — שולטת לגמרי, עיניים לא מרפות. ממשיכים — היא עולה עליו, כופתת לו את הידיים, מזיינת אותו חזק בקצב שלה. שפיכה על החזה — היא מחליטה מתי ואיפה. מחייכת ומסתלקת." }
   ],
-  recipe: ["1. בחרו תרחיש ביחד מהרשימה למעלה (או המציאו משלכם!)", "2. הכינו תלבושת פשוטה - לא חייבים להשקיע הרבה", "3. קבעו 'מילת עצירה' לפני שמתחילים", "4. הישארו בדמות כמה שיותר זמן - זה יוצר מתח!", "5. צחוק זה בסדר לגמרי - זה חלק מהכיף 😄"],
+  recipe: ["1. בחרו תרחיש או תנו לגורל לבחור עבורכם", "2. תתלבשו בהתאם", "3. תמזגו כוס יין לאווירה", "4. הישארו בדמויות כמה שיותר זמן — זה כל הפאן"],
   link: "https://www.aliexpress.com/w/wholesale-costume-sexy.html"
 }, {
   id: 2006,
@@ -4937,6 +4937,7 @@ function ItemScreen({
   const [roleplayData, setRoleplayData] = useState({});
   const [showEditModal, setShowEditModal] = useState(false);
   const [editDraft, setEditDraft] = useState(null);
+  const [showPickerModal, setShowPickerModal] = useState(false);
   React.useEffect(() => {
     fetch('roleplay.json').then(r => r.json()).then(setRoleplayData).catch(() => {});
   }, []);
@@ -4977,6 +4978,18 @@ function ItemScreen({
     setPickedIdea(idea);
     setPickedSession(session);
     setPickedPhoto(session.length > 0 ? session[0] : null);
+  };
+  const pickIdea = (idx) => {
+    const idea = item.ideas[idx];
+    const rpSessions = idea.photoKey && roleplayData[idea.photoKey];
+    const sessions = (rpSessions && rpSessions.length > 0) ? rpSessions : [];
+    const session = sessions.length > 0 ? sessions[Math.floor(Math.random() * sessions.length)] : [];
+    setLastIdeaIdx(idx);
+    setPickedIdea(idea);
+    setPickedSession(session);
+    setPickedPhoto(session.length > 0 ? session[0] : null);
+    setShowPickerModal(false);
+    setShowIdeaModal(true);
   };
   if (!item) return null;
   return /*#__PURE__*/React.createElement("div", {
@@ -5052,7 +5065,24 @@ function ItemScreen({
   }, "אפס"), /*#__PURE__*/React.createElement("button", {
     onClick: () => { setShowEditModal(false); setEditDraft(null); },
     style: { flex: 1, background: "#222", color: "#888", border: "none", borderRadius: 12, padding: "12px", fontSize: 15, cursor: "pointer" }
-  }, "ביטול")))), /*#__PURE__*/React.createElement("div", {
+  }, "ביטול")))), showPickerModal && item.ideas && /*#__PURE__*/React.createElement("div", {
+    onClick: () => setShowPickerModal(false),
+    style: { position: "fixed", inset: 0, zIndex: 500, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "flex-end" }
+  }, /*#__PURE__*/React.createElement("div", {
+    onClick: e => e.stopPropagation(),
+    style: { background: "#16060f", width: "100%", borderRadius: "20px 20px 0 0", padding: "20px 16px 28px", maxHeight: "80vh", overflowY: "auto", direction: "rtl", boxSizing: "border-box" }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: { fontSize: 17, fontWeight: "bold", color: "#f0c0d8", marginBottom: 16, textAlign: "center" }
+  }, "🎭 בחרו תרחיש"), /*#__PURE__*/React.createElement("div", {
+    style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }
+  }, item.ideas.map((idea, idx) => /*#__PURE__*/React.createElement("button", {
+    key: idea.id,
+    onClick: () => pickIdea(idx),
+    style: { background: "#2a0a1a", color: "#f0c0d8", border: "1px solid #5a1a3a", borderRadius: 12, padding: "10px 8px", fontSize: 12, cursor: "pointer", textAlign: "center", direction: "rtl", lineHeight: 1.3 }
+  }, idea.text.split("—")[0].trim()))), /*#__PURE__*/React.createElement("button", {
+    onClick: () => { if (!item.ideas || !item.ideas.length) return; let rIdx; do { rIdx = Math.floor(Math.random() * item.ideas.length); } while (rIdx === lastIdeaIdx && item.ideas.length > 1); pickIdea(rIdx); },
+    style: { width: "100%", background: "linear-gradient(135deg, #800040, #4a0030)", color: "#fff", border: "none", borderRadius: 16, padding: "16px 24px", fontSize: 19, fontWeight: "bold", cursor: "pointer", boxShadow: "0 4px 14px rgba(128,0,64,0.45)" }
+  }, "🎲 תרחיש רנדומלי"))), /*#__PURE__*/React.createElement("div", {
     style: {
       position: "relative"
     }
@@ -5239,7 +5269,7 @@ function ItemScreen({
       gap: 12
     }
   }, /*#__PURE__*/React.createElement("button", {
-    onClick: shuffleIdea,
+    onClick: () => setShowPickerModal(true),
     style: {
       background: "linear-gradient(135deg, #800040, #4a0030)",
       color: "#fff",
@@ -5256,7 +5286,7 @@ function ItemScreen({
       width: "100%",
       boxShadow: "0 4px 14px rgba(128,0,64,0.35)"
     }
-  }, "\uD83C\uDFB2 \u05E2\u05E8\u05D1\u05D1 \u05EA\u05E8\u05D7\u05D9\u05E9"), pickedIdea && /*#__PURE__*/React.createElement("div", {
+  }, "\uD83C\uDFAD \u05D1\u05D7\u05E8\u05D5 \u05EA\u05E8\u05D7\u05D9\u05E9"), pickedIdea && /*#__PURE__*/React.createElement("div", {
     style: {
       borderRadius: 18,
       overflow: "hidden",
@@ -5390,7 +5420,7 @@ function ItemScreen({
       fontSize: 16,
       display: "block"
     }
-  }, "\uD83C\uDFAD \u05D4\u05D6\u05DE\u05E0\u05EA \u05DB\u05E8\u05D8\u05D9\u05E1\u05D9\u05DD - ", item.venue), item.link && !item.trailerLink && !item.venue && item.id !== 2001 && /*#__PURE__*/React.createElement("a", {
+  }, "\uD83C\uDFAD \u05D4\u05D6\u05DE\u05E0\u05EA \u05DB\u05E8\u05D8\u05D9\u05E1\u05D9\u05DD - ", item.venue), item.link && !item.trailerLink && !item.venue && item.id !== 2001 && item.id !== 2004 && /*#__PURE__*/React.createElement("a", {
     href: item.link,
     target: "_blank",
     rel: "noopener noreferrer",
