@@ -386,7 +386,7 @@ body.positions-open #positions-book-overlay {
   <div id="root"></div>
 
 <script>
-const BUILD_TS = "23.10.26 18:02";
+const BUILD_TS = "25.10.26 00:20";
 const {
   useState,
   useCallback,
@@ -5080,6 +5080,7 @@ function ItemScreen({
   const [showEditModal, setShowEditModal] = useState(false);
   const [editDraft, setEditDraft] = useState(null);
   const [showPickerModal, setShowPickerModal] = useState(false);
+  const [seenPairs, setSeenPairs] = useState(new Set());
   React.useEffect(() => {
     fetch('roleplay.json').then(r => r.json()).then(setRoleplayData).catch(() => {});
   }, []);
@@ -5131,11 +5132,22 @@ function ItemScreen({
     setPickedSession(session);
     setPickedPhoto(session.length > 0 ? session[0] : null);
   };
-  const pickIdea = idx => {
+  const pickIdea = (idx, sIdx) => {
     const idea = item.ideas[idx];
     const rpSessions = idea.photoKey && roleplayData[idea.photoKey];
     const sessions = rpSessions && rpSessions.length > 0 ? rpSessions : [];
-    const session = sessions.length > 0 ? sessions[Math.floor(Math.random() * sessions.length)] : [];
+    const resolvedSIdx = sIdx !== undefined && sIdx !== null ? sIdx : sessions.length > 0 ? Math.floor(Math.random() * sessions.length) : 0;
+    const session = sessions.length > resolvedSIdx ? sessions[resolvedSIdx] : [];
+    const pairKey = idx + "-" + resolvedSIdx;
+    setSeenPairs(prev => {
+      const next = new Set(prev);
+      next.add(pairKey);
+      const total = item.ideas.reduce((sum, idea2) => {
+        const s = idea2.photoKey && roleplayData[idea2.photoKey];
+        return sum + (s && s.length > 0 ? s.length : 1);
+      }, 0);
+      return next.size >= total ? new Set() : next;
+    });
     setLastIdeaIdx(idx);
     setPickedIdea(idea);
     setPickedSession(session);
@@ -5430,29 +5442,72 @@ function ItemScreen({
       gap: 8,
       marginBottom: 16
     }
-  }, item.ideas.map((idea, idx) => /*#__PURE__*/React.createElement("button", {
-    key: idea.id,
-    onClick: () => pickIdea(idx),
-    style: {
-      background: "#2a0a1a",
-      color: "#f0c0d8",
-      border: "1px solid #5a1a3a",
-      borderRadius: 12,
-      padding: "10px 8px",
-      fontSize: 12,
-      cursor: "pointer",
-      textAlign: "center",
-      direction: "rtl",
-      lineHeight: 1.3
+  }, item.ideas.map((idea, idx) => {
+    const rp = idea.photoKey && roleplayData[idea.photoKey];
+    const cnt = rp && rp.length > 0 ? rp.length : 1;
+    const sn = idea.text.split("—")[0].trim();
+    if (cnt <= 1) {
+      return /*#__PURE__*/React.createElement("button", {
+        key: idea.id,
+        onClick: () => pickIdea(idx, 0),
+        style: {
+          background: "#2a0a1a",
+          color: "#f0c0d8",
+          border: "1px solid #5a1a3a",
+          borderRadius: 12,
+          padding: "10px 8px",
+          fontSize: 12,
+          cursor: "pointer",
+          textAlign: "center",
+          direction: "rtl",
+          lineHeight: 1.3,
+          opacity: seenPairs.has(idx + "-0") ? 0.35 : 1
+        }
+      }, sn);
     }
-  }, idea.text.split("—")[0].trim()))), /*#__PURE__*/React.createElement("button", {
+    return /*#__PURE__*/React.createElement("div", {
+      key: idea.id,
+      style: {
+        display: "flex",
+        gap: 4
+      }
+    }, Array.from({
+      length: cnt
+    }, (_, j) => /*#__PURE__*/React.createElement("button", {
+      key: j,
+      onClick: () => pickIdea(idx, j),
+      style: {
+        flex: 1,
+        background: "#2a0a1a",
+        color: "#f0c0d8",
+        border: "1px solid #5a1a3a",
+        borderRadius: 10,
+        padding: "8px 4px",
+        fontSize: 11,
+        cursor: "pointer",
+        textAlign: "center",
+        direction: "rtl",
+        lineHeight: 1.2,
+        opacity: seenPairs.has(idx + "-" + j) ? 0.35 : 1
+      }
+    }, sn + " " + (j + 1))));
+  })), /*#__PURE__*/React.createElement("button", {
     onClick: () => {
       if (!item.ideas || !item.ideas.length) return;
-      let rIdx;
-      do {
-        rIdx = Math.floor(Math.random() * item.ideas.length);
-      } while (rIdx === lastIdeaIdx && item.ideas.length > 1);
-      pickIdea(rIdx);
+      const allP = item.ideas.flatMap((x, i) => {
+        const s = x.photoKey && roleplayData[x.photoKey];
+        const c = s && s.length > 0 ? s.length : 1;
+        return Array.from({
+          length: c
+        }, (_, j) => ({
+          i,
+          j
+        }));
+      });
+      const unseen = allP.filter(p => !seenPairs.has(p.i + "-" + p.j));
+      const pool = unseen.length > 0 ? unseen : allP;
+      const pick = pool[Math.floor(Math.random() * pool.length)];
+      pickIdea(pick.i, pick.j);
     },
     style: {
       width: "100%",
