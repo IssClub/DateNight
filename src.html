@@ -1708,7 +1708,8 @@ const ADVENTURE = [{
 function PasswordModal({
   onSubmit,
   onClose,
-  error
+  error,
+  onFaceId
 }) {
   const [val, setVal] = useState("");
   return /*#__PURE__*/React.createElement("div", {
@@ -1749,7 +1750,12 @@ function PasswordModal({
       margin: "0 0 20px",
       fontFamily: FONT_SANS
     }
-  }, "\u05D4\u05DB\u05E0\u05E1 \u05E1\u05D9\u05E1\u05DE\u05D0 \u05DC\u05DB\u05E0\u05D9\u05E1\u05D4 \u05DC\u05EA\u05EA-\u05E7\u05D8\u05D2\u05D5\u05E8\u05D9\u05D4 \u05D6\u05D5"), /*#__PURE__*/React.createElement("input", {
+  }, "\u05D4\u05DB\u05E0\u05E1 \u05E1\u05D9\u05E1\u05DE\u05D0 \u05DC\u05DB\u05E0\u05D9\u05E1\u05D4 \u05DC\u05EA\u05EA-\u05E7\u05D8\u05D2\u05D5\u05E8\u05D9\u05D4 \u05D6\u05D5"), onFaceId && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
+    onClick: onFaceId,
+    style: { width: "100%", padding: "13px", borderRadius: 14, border: "2px solid rgba(201,168,76,0.5)", background: "rgba(201,168,76,0.08)", color: T.brown, fontFamily: FONT_SANS, fontWeight: 700, fontSize: 16, cursor: "pointer", marginBottom: 14, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }
+  }, "\uD83E\uDEA6 \u05DB\u05E0\u05D9\u05E1\u05D4 \u05E2\u05DD \u05D6\u05D9\u05D4\u05D5\u05D9 \u05E4\u05E0\u05D9\u05DD"), /*#__PURE__*/React.createElement("div", {
+    style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }
+  }, /*#__PURE__*/React.createElement("div", { style: { flex: 1, height: 1, background: T.border } }), /*#__PURE__*/React.createElement("span", { style: { color: T.textS, fontSize: 12, whiteSpace: "nowrap" } }, "\u05D0\u05D5 \u05D4\u05DB\u05E0\u05E1 \u05E1\u05D9\u05E1\u05DE\u05D0"), /*#__PURE__*/React.createElement("div", { style: { flex: 1, height: 1, background: T.border } }))), /*#__PURE__*/React.createElement("input", {
     type: "password",
     placeholder: "\u05E1\u05D9\u05E1\u05DE\u05D0...",
     value: val,
@@ -2348,8 +2354,19 @@ function DateNight() {
     if (!splashDone || appLockChecked) return;
     setAppLockChecked(true);
     if (localStorage.getItem("dn_app_lock") === "1") {
-      setPasswordTarget("app_lock");
-      setShowPasswordModal(true);
+      if (localStorage.getItem("dn_bio_id")) {
+        (async () => {
+          try {
+            const ok = await biometricAvailable();
+            if (ok) { await authenticateBiometric(); return; }
+          } catch {}
+          setPasswordTarget("app_lock");
+          setShowPasswordModal(true);
+        })();
+      } else {
+        setPasswordTarget("app_lock");
+        setShowPasswordModal(true);
+      }
     }
   }, [splashDone]);
   const [pendingRating, setPendingRating] = useState(null); // דייט שמחכה לדירוג
@@ -2580,7 +2597,16 @@ showPasswordModal && /*#__PURE__*/React.createElement(PasswordModal, {
       setShowPasswordModal(false);
       setPasswordError(false);
     },
-    error: passwordError
+    error: passwordError,
+    onFaceId: (passwordTarget === "app_lock" && localStorage.getItem("dn_bio_id")) ? async () => {
+      try {
+        if (await biometricAvailable()) {
+          await authenticateBiometric();
+          setShowPasswordModal(false);
+          setPasswordError(false);
+        }
+      } catch { setPasswordError(true); }
+    } : null
   }), pendingRating && /*#__PURE__*/React.createElement(PendingRatingPopup, {
     date: pendingRating,
     onClose: () => setPendingRating(null),
