@@ -386,7 +386,7 @@ body.positions-open #positions-book-overlay {
   <div id="root"></div>
 
 <script>
-const BUILD_TS = "25.10.26 07:19";
+const BUILD_TS = "25.10.26 07:26";
 const {
   useState,
   useCallback,
@@ -5491,11 +5491,18 @@ function ItemScreen({
       background: "#16060f",
       width: "100%",
       borderRadius: "20px 20px 0 0",
-      padding: "20px 16px 28px",
       maxHeight: "80vh",
-      overflowY: "auto",
       direction: "rtl",
-      boxSizing: "border-box"
+      boxSizing: "border-box",
+      display: "flex",
+      flexDirection: "column"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      overflowY: "auto",
+      WebkitOverflowScrolling: "touch",
+      flex: 1,
+      padding: "20px 16px 8px"
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -5509,8 +5516,7 @@ function ItemScreen({
     style: {
       display: "grid",
       gridTemplateColumns: "1fr 1fr",
-      gap: 8,
-      marginBottom: 16
+      gap: 8
     }
   }, item.ideas.map((idea, idx) => {
     const rp = idea.photoKey && roleplayData[idea.photoKey];
@@ -5579,7 +5585,12 @@ function ItemScreen({
         opacity: seenPairs.has(idx + "-" + j) ? 0.35 : 1
       }
     }, j + 1)));
-  })), /*#__PURE__*/React.createElement("button", {
+  }))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "8px 16px calc(16px + env(safe-area-inset-bottom, 0px))",
+      flexShrink: 0
+    }
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: () => {
       if (!item.ideas || !item.ideas.length) return;
       const allP = item.ideas.flatMap((x, i) => {
@@ -5609,7 +5620,7 @@ function ItemScreen({
       cursor: "pointer",
       boxShadow: "0 4px 14px rgba(128,0,64,0.45)"
     }
-  }, "🎲 תרחיש רנדומלי"))), /*#__PURE__*/React.createElement("div", {
+  }, "🎲 תרחיש רנדומלי")))), /*#__PURE__*/React.createElement("div", {
     style: {
       position: "relative"
     }
