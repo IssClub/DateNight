@@ -2354,18 +2354,15 @@ function DateNight() {
     if (!splashDone || appLockChecked) return;
     setAppLockChecked(true);
     if (localStorage.getItem("dn_app_lock") === "1") {
+      setPasswordTarget("app_lock");
+      setShowPasswordModal(true);
       if (localStorage.getItem("dn_bio_id")) {
         (async () => {
           try {
-            const ok = await biometricAvailable();
-            if (ok) { await authenticateBiometric(); return; }
+            await authenticateBiometric();
+            setShowPasswordModal(false);
           } catch {}
-          setPasswordTarget("app_lock");
-          setShowPasswordModal(true);
         })();
-      } else {
-        setPasswordTarget("app_lock");
-        setShowPasswordModal(true);
       }
     }
   }, [splashDone]);
@@ -2600,11 +2597,9 @@ showPasswordModal && /*#__PURE__*/React.createElement(PasswordModal, {
     error: passwordError,
     onFaceId: (passwordTarget === "app_lock" && localStorage.getItem("dn_bio_id")) ? async () => {
       try {
-        if (await biometricAvailable()) {
-          await authenticateBiometric();
-          setShowPasswordModal(false);
-          setPasswordError(false);
-        }
+        await authenticateBiometric();
+        setShowPasswordModal(false);
+        setPasswordError(false);
       } catch { setPasswordError(true); }
     } : null
   }), pendingRating && /*#__PURE__*/React.createElement(PendingRatingPopup, {
