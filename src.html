@@ -5113,7 +5113,7 @@ function ItemScreen({
     style: { fontSize: 17, fontWeight: "bold", color: "#f0c0d8", marginBottom: 16, textAlign: "center" }
   }, "🎭 בחרו תרחיש"), /*#__PURE__*/React.createElement("div", {
     style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }
-  }, item.ideas.map((idea, idx) => { const rp = idea.photoKey && roleplayData[idea.photoKey]; const cnt = (rp && rp.length > 0) ? rp.length : 1; const sn = idea.text.split("—")[0].trim(); if (cnt <= 1) { return /*#__PURE__*/React.createElement("button", { key: idea.id, onClick: () => pickIdea(idx, 0), style: { background: "#2a0a1a", color: "#f0c0d8", border: "1px solid #5a1a3a", borderRadius: 12, padding: "10px 8px", fontSize: 12, cursor: "pointer", textAlign: "center", direction: "rtl", lineHeight: 1.3, opacity: seenPairs.has(idx + "-0") ? 0.35 : 1 } }, sn); } return /*#__PURE__*/React.createElement("div", { key: idea.id, style: { display: "flex", gap: 4 } }, Array.from({length: cnt}, (_, j) => /*#__PURE__*/React.createElement("button", { key: j, onClick: () => pickIdea(idx, j), style: { flex: 1, background: "#2a0a1a", color: "#f0c0d8", border: "1px solid #5a1a3a", borderRadius: 10, padding: "8px 4px", fontSize: 11, cursor: "pointer", textAlign: "center", direction: "rtl", lineHeight: 1.2, opacity: seenPairs.has(idx + "-" + j) ? 0.35 : 1 } }, sn + " " + (j + 1)))); })), /*#__PURE__*/React.createElement("button", {
+  }, item.ideas.map((idea, idx) => { const rp = idea.photoKey && roleplayData[idea.photoKey]; const cnt = (rp && rp.length > 0) ? rp.length : 1; const sn = idea.text.split("—")[0].trim(); if (cnt <= 1) { return /*#__PURE__*/React.createElement("button", { key: idea.id, onClick: () => pickIdea(idx, 0), style: { background: "#2a0a1a", color: "#f0c0d8", border: "1px solid #5a1a3a", borderRadius: 12, padding: "10px 8px", fontSize: 12, cursor: "pointer", textAlign: "center", direction: "rtl", lineHeight: 1.3, opacity: seenPairs.has(idx + "-0") ? 0.35 : 1 } }, sn); } return /*#__PURE__*/React.createElement("div", { key: idea.id, style: { display: "flex", gap: 6, gridColumn: "1 / -1" } }, /*#__PURE__*/React.createElement("button", { onClick: () => pickIdea(idx), style: { flex: 1, background: "#2a0a1a", color: "#f0c0d8", border: "1px solid #5a1a3a", borderRadius: 12, padding: "10px 8px", fontSize: 12, cursor: "pointer", textAlign: "center", direction: "rtl", lineHeight: 1.3, opacity: Array.from({length: cnt}, (_, j) => seenPairs.has(idx + "-" + j)).every(Boolean) ? 0.35 : 1 } }, sn), ...Array.from({length: cnt}, (_, j) => /*#__PURE__*/React.createElement("button", { key: j, onClick: () => pickIdea(idx, j), style: { width: 30, flexShrink: 0, background: "#3a0820", color: "#f0c0d8", border: "1px solid #5a1a3a", borderRadius: 10, padding: "8px 2px", fontSize: 13, fontWeight: "bold", cursor: "pointer", opacity: seenPairs.has(idx + "-" + j) ? 0.35 : 1 } }, j + 1))); })), /*#__PURE__*/React.createElement("button", {
     onClick: () => { if (!item.ideas || !item.ideas.length) return; const allP = item.ideas.flatMap((x, i) => { const s = x.photoKey && roleplayData[x.photoKey]; const c = (s && s.length > 0) ? s.length : 1; return Array.from({length: c}, (_, j) => ({i, j})); }); const unseen = allP.filter(p => !seenPairs.has(p.i + "-" + p.j)); const pool = unseen.length > 0 ? unseen : allP; const pick = pool[Math.floor(Math.random() * pool.length)]; pickIdea(pick.i, pick.j); },
     style: { width: "100%", background: "linear-gradient(135deg, #800040, #4a0030)", color: "#fff", border: "none", borderRadius: 16, padding: "16px 24px", fontSize: 19, fontWeight: "bold", cursor: "pointer", boxShadow: "0 4px 14px rgba(128,0,64,0.45)" }
   }, "🎲 תרחיש רנדומלי"))), /*#__PURE__*/React.createElement("div", {
@@ -6852,6 +6852,8 @@ function SettingsScreen({ darkMode, setDarkMode, goHome }) {
   const [privacyUnlocked, setPrivacyUnlocked] = useState(false);
   const [privacyInput, setPrivacyInput] = useState("");
   const [privacyMsg, setPrivacyMsg] = useState("");
+  const [bioRegistered, setBioRegistered] = useState(() => !!localStorage.getItem("dn_bio_id"));
+  const [bioMsg, setBioMsg] = useState("");
 
   const sectionHeader = (label) => React.createElement("div", {
     style: {
@@ -6999,8 +7001,27 @@ function SettingsScreen({ darkMode, setDarkMode, goHome }) {
   // Reset Face ID (only available after privacy unlock)
   const handleResetFaceId = () => {
     localStorage.removeItem("dn_bio_id");
+    setBioRegistered(false);
     setFaceMsg("Face ID אופס ✓");
     setTimeout(() => setFaceMsg(""), 3000);
+  };
+
+  const handleActivateAppFaceId = async () => {
+    setBioMsg("...");
+    try {
+      await registerBiometric();
+      setBioRegistered(true);
+      setBioMsg("Face ID הופעל ✓");
+    } catch {
+      setBioMsg("בוטל");
+    }
+    setTimeout(() => setBioMsg(""), 3000);
+  };
+  const handleDeactivateAppFaceId = () => {
+    localStorage.removeItem("dn_bio_id");
+    setBioRegistered(false);
+    setBioMsg("Face ID בוטל");
+    setTimeout(() => setBioMsg(""), 2000);
   };
 
   // App lock toggle
@@ -7149,7 +7170,13 @@ function SettingsScreen({ darkMode, setDarkMode, goHome }) {
       row(React.createElement(React.Fragment, null,
         rowLabel("נעל אפליקציה בפתיחה", "דרוש סיסמה בכל פתיחה"),
         React.createElement(Toggle, { value: appLock, onChange: handleAppLockToggle })
-      ))
+      )),
+      appLock ? row(React.createElement(React.Fragment, null,
+        rowLabel("כניסה עם Face ID", bioMsg || (bioRegistered ? "פעיל — לחץ להסרה" : "הפעל זיהוי פנים לכניסה מהירה")),
+        bioRegistered
+          ? actionBtn("הסר", handleDeactivateAppFaceId, true)
+          : actionBtn("הפעל", handleActivateAppFaceId)
+      )) : null
     )
   );
 }
