@@ -386,7 +386,7 @@ body.positions-open #positions-book-overlay {
   <div id="root"></div>
 
 <script>
-const BUILD_TS = "25.10.26 07:26";
+const BUILD_TS = "25.10.26 16:28";
 const {
   useState,
   useCallback,
@@ -5502,6 +5502,7 @@ function ItemScreen({
       overflowY: "auto",
       WebkitOverflowScrolling: "touch",
       flex: 1,
+      minHeight: 0,
       padding: "20px 16px 8px"
     }
   }, /*#__PURE__*/React.createElement("div", {
@@ -5545,8 +5546,7 @@ function ItemScreen({
       key: idea.id,
       style: {
         display: "flex",
-        gap: 6,
-        gridColumn: "1 / -1"
+        gap: 4
       }
     }, /*#__PURE__*/React.createElement("button", {
       onClick: () => pickIdea(idx),
