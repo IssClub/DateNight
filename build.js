@@ -120,6 +120,25 @@ if (fs.existsSync(rpDir)) {
   Object.keys(roleplays).forEach(k => { roleplays[k] = roleplays[k].filter(Boolean); });
   fs.writeFileSync(path.join(__dirname, 'roleplay.json'), JSON.stringify(roleplays, null, 2));
   console.log(`  roleplay.json → ${Object.keys(roleplays).length} scenarios  ✓ auto-synced`);
+
+  // Sync roleplay-meta.json: ensure each scenario has the right number of slots
+  const metaPath = path.join(__dirname, 'roleplay-meta.json');
+  if (fs.existsSync(metaPath)) {
+    let meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+    let metaUpdated = false;
+    Object.keys(roleplays).forEach(scenario => {
+      const sessionCount = roleplays[scenario].length;
+      if (!Array.isArray(meta[scenario])) meta[scenario] = [{}];
+      while (meta[scenario].length < sessionCount) {
+        meta[scenario].push({});
+        metaUpdated = true;
+      }
+    });
+    if (metaUpdated) {
+      fs.writeFileSync(metaPath, JSON.stringify(meta, null, 2));
+      console.log(`  roleplay-meta.json → new slots added  ✓`);
+    }
+  }
 }
 
 const srcSize  = (fs.statSync(SRC).size  / 1024).toFixed(1);

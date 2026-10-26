@@ -4940,6 +4940,7 @@ function ItemScreen({
   const [pickedIdea, setPickedIdea] = useState(null);
   const [pickedPhoto, setPickedPhoto] = useState(null);
   const [pickedSession, setPickedSession] = useState([]);
+  const [pickedSessionIdx, setPickedSessionIdx] = useState(0);
   const [slideIdx, setSlideIdx] = useState(0);
   const [showIdeaModal, setShowIdeaModal] = useState(false);
   const [rpMeta, setRpMeta] = useState({});
@@ -4961,17 +4962,18 @@ function ItemScreen({
     const t = setInterval(() => setSlideIdx(i => (i + 1) % pickedSession.length), 2000);
     return () => clearInterval(t);
   }, [showIdeaModal, pickedSession]);
-  const getEffIdea = (idea) => {
+  const getEffIdea = (idea, sIdx = 0) => {
     try {
-      const meta = rpMeta[idea.id];
-      const base = meta ? Object.assign({}, idea, meta) : idea;
-      const s = localStorage.getItem('rp_' + idea.id);
+      const metaArr = rpMeta[idea.id];
+      const meta = Array.isArray(metaArr) ? (metaArr[sIdx] || {}) : {};
+      const base = Object.keys(meta).length ? Object.assign({}, idea, meta) : idea;
+      const s = localStorage.getItem('rp_' + idea.id + '_' + sIdx);
       return s ? Object.assign({}, base, JSON.parse(s)) : base;
     } catch(e) { return idea; }
   };
   const saveEdit = () => {
     try {
-      localStorage.setItem('rp_' + editDraft.id, JSON.stringify({
+      localStorage.setItem('rp_' + editDraft.id + '_' + pickedSessionIdx, JSON.stringify({
         text: editDraft.text, outfit: editDraft.outfit, scene: editDraft.scene
       }));
     } catch(e) {}
@@ -4979,7 +4981,7 @@ function ItemScreen({
     setEditDraft(null);
   };
   const resetIdea = (idea) => {
-    try { localStorage.removeItem('rp_' + idea.id); } catch(e) {}
+    try { localStorage.removeItem('rp_' + idea.id + '_' + pickedSessionIdx); } catch(e) {}
   };
   const shuffleIdea = () => {
     if (!item.ideas || item.ideas.length === 0) return;
@@ -4989,10 +4991,12 @@ function ItemScreen({
     const idea = item.ideas[idx];
     const rpSessions = idea.photoKey && roleplayData[idea.photoKey];
     const sessions = (rpSessions && rpSessions.length > 0) ? rpSessions : [];
-    const session = sessions.length > 0 ? sessions[Math.floor(Math.random() * sessions.length)] : [];
+    const randSIdx = sessions.length > 0 ? Math.floor(Math.random() * sessions.length) : 0;
+    const session = sessions.length > randSIdx ? sessions[randSIdx] : [];
     setLastIdeaIdx(idx);
     setPickedIdea(idea);
     setPickedSession(session);
+    setPickedSessionIdx(randSIdx);
     setPickedPhoto(session.length > 0 ? session[0] : null);
   };
   const pickIdea = (idx, sIdx) => {
@@ -5014,6 +5018,7 @@ function ItemScreen({
     setLastIdeaIdx(idx);
     setPickedIdea(idea);
     setPickedSession(session);
+    setPickedSessionIdx(resolvedSIdx);
     setPickedPhoto(session.length > 0 ? session[0] : null);
     setShowPickerModal(false);
     setShowIdeaModal(true);
@@ -5044,14 +5049,14 @@ function ItemScreen({
     style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }
   }, /*#__PURE__*/React.createElement("div", {
     style: { fontSize: 17, fontWeight: "bold", color: "#fff" }
-  }, getEffIdea(pickedIdea).text.slice(3)), /*#__PURE__*/React.createElement("button", {
-    onClick: () => { setEditDraft(Object.assign({}, getEffIdea(pickedIdea))); setShowEditModal(true); },
+  }, getEffIdea(pickedIdea, pickedSessionIdx).text.slice(3)), /*#__PURE__*/React.createElement("button", {
+    onClick: () => { setEditDraft(Object.assign({}, getEffIdea(pickedIdea, pickedSessionIdx))); setShowEditModal(true); },
     style: { background: "transparent", border: "1px solid #555", borderRadius: 8, color: "#aaa", fontSize: 14, padding: "4px 10px", cursor: "pointer", flexShrink: 0 }
   }, "✏️")), /*#__PURE__*/React.createElement("div", {
     style: { fontSize: 13, color: "#888", marginBottom: 8, lineHeight: 1.6 }
-  }, "👗 ", getEffIdea(pickedIdea).outfit), /*#__PURE__*/React.createElement("div", {
+  }, "👗 ", getEffIdea(pickedIdea, pickedSessionIdx).outfit), /*#__PURE__*/React.createElement("div", {
     style: { fontSize: 14, color: "#ddd", lineHeight: 1.7 }
-  }, "💋 ", getEffIdea(pickedIdea).scene), /*#__PURE__*/React.createElement("div", {
+  }, "💋 ", getEffIdea(pickedIdea, pickedSessionIdx).scene), /*#__PURE__*/React.createElement("div", {
     style: { marginTop: 12, textAlign: "center", fontSize: 12, color: "#555" }
   }, "לחץ מחוץ לטקסט לסגירה"))), showEditModal && editDraft && /*#__PURE__*/React.createElement("div", {
     onClick: () => { setShowEditModal(false); setEditDraft(null); },
@@ -5327,12 +5332,12 @@ function ItemScreen({
     style: { height: 140, background: "linear-gradient(135deg, #4a0030, #800040)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 56, cursor: "pointer" }
   }, pickedIdea.text.slice(0, 2)), /*#__PURE__*/React.createElement("div", {
     style: { padding: "14px 16px", textAlign: "center", fontSize: 18, fontWeight: "bold", color: T.text, lineHeight: 1.4 }
-  }, getEffIdea(pickedIdea).text.slice(3)), (getEffIdea(pickedIdea).outfit || getEffIdea(pickedIdea).scene) && /*#__PURE__*/React.createElement("div", {
+  }, getEffIdea(pickedIdea, pickedSessionIdx).text.slice(3)), (getEffIdea(pickedIdea, pickedSessionIdx).outfit || getEffIdea(pickedIdea, pickedSessionIdx).scene) && /*#__PURE__*/React.createElement("div", {
     onClick: () => setShowIdeaModal(true),
     style: { padding: "10px 16px 14px", fontSize: 13, color: T.textS, lineHeight: 1.6, borderTop: `1px solid ${T.border}`, textAlign: "right", direction: "rtl", cursor: "pointer" }
-  }, getEffIdea(pickedIdea).outfit && /*#__PURE__*/React.createElement("div", {
+  }, getEffIdea(pickedIdea, pickedSessionIdx).outfit && /*#__PURE__*/React.createElement("div", {
     style: { marginBottom: 6, color: T.textS }
-  }, "👗 ", getEffIdea(pickedIdea).outfit), getEffIdea(pickedIdea).scene && /*#__PURE__*/React.createElement("div", null, "💋 ", getEffIdea(pickedIdea).scene))))), item.ingredients && item.ingredients.length > 0 && /*#__PURE__*/React.createElement(Section, {
+  }, "👗 ", getEffIdea(pickedIdea, pickedSessionIdx).outfit), getEffIdea(pickedIdea, pickedSessionIdx).scene && /*#__PURE__*/React.createElement("div", null, "💋 ", getEffIdea(pickedIdea, pickedSessionIdx).scene))))), item.ingredients && item.ingredients.length > 0 && /*#__PURE__*/React.createElement(Section, {
     title: "\uD83D\uDED2 \u05DE\u05D4 \u05E6\u05E8\u05D9\u05DA \u05DC\u05E7\u05E0\u05D5\u05EA"
   }, /*#__PURE__*/React.createElement("div", {
     style: {

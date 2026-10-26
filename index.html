@@ -386,7 +386,7 @@ body.positions-open #positions-book-overlay {
   <div id="root"></div>
 
 <script>
-const BUILD_TS = "26.10.26 19:32";
+const BUILD_TS = "26.10.26 19:52";
 const {
   useState,
   useCallback,
@@ -5139,6 +5139,7 @@ function ItemScreen({
   const [pickedIdea, setPickedIdea] = useState(null);
   const [pickedPhoto, setPickedPhoto] = useState(null);
   const [pickedSession, setPickedSession] = useState([]);
+  const [pickedSessionIdx, setPickedSessionIdx] = useState(0);
   const [slideIdx, setSlideIdx] = useState(0);
   const [showIdeaModal, setShowIdeaModal] = useState(false);
   const [rpMeta, setRpMeta] = useState({});
@@ -5164,11 +5165,12 @@ function ItemScreen({
     const t = setInterval(() => setSlideIdx(i => (i + 1) % pickedSession.length), 2000);
     return () => clearInterval(t);
   }, [showIdeaModal, pickedSession]);
-  const getEffIdea = idea => {
+  const getEffIdea = (idea, sIdx = 0) => {
     try {
-      const meta = rpMeta[idea.id];
-      const base = meta ? Object.assign({}, idea, meta) : idea;
-      const s = localStorage.getItem('rp_' + idea.id);
+      const metaArr = rpMeta[idea.id];
+      const meta = Array.isArray(metaArr) ? metaArr[sIdx] || {} : {};
+      const base = Object.keys(meta).length ? Object.assign({}, idea, meta) : idea;
+      const s = localStorage.getItem('rp_' + idea.id + '_' + sIdx);
       return s ? Object.assign({}, base, JSON.parse(s)) : base;
     } catch (e) {
       return idea;
@@ -5176,7 +5178,7 @@ function ItemScreen({
   };
   const saveEdit = () => {
     try {
-      localStorage.setItem('rp_' + editDraft.id, JSON.stringify({
+      localStorage.setItem('rp_' + editDraft.id + '_' + pickedSessionIdx, JSON.stringify({
         text: editDraft.text,
         outfit: editDraft.outfit,
         scene: editDraft.scene
@@ -5187,7 +5189,7 @@ function ItemScreen({
   };
   const resetIdea = idea => {
     try {
-      localStorage.removeItem('rp_' + idea.id);
+      localStorage.removeItem('rp_' + idea.id + '_' + pickedSessionIdx);
     } catch (e) {}
   };
   const shuffleIdea = () => {
@@ -5199,10 +5201,12 @@ function ItemScreen({
     const idea = item.ideas[idx];
     const rpSessions = idea.photoKey && roleplayData[idea.photoKey];
     const sessions = rpSessions && rpSessions.length > 0 ? rpSessions : [];
-    const session = sessions.length > 0 ? sessions[Math.floor(Math.random() * sessions.length)] : [];
+    const randSIdx = sessions.length > 0 ? Math.floor(Math.random() * sessions.length) : 0;
+    const session = sessions.length > randSIdx ? sessions[randSIdx] : [];
     setLastIdeaIdx(idx);
     setPickedIdea(idea);
     setPickedSession(session);
+    setPickedSessionIdx(randSIdx);
     setPickedPhoto(session.length > 0 ? session[0] : null);
   };
   const pickIdea = (idx, sIdx) => {
@@ -5224,6 +5228,7 @@ function ItemScreen({
     setLastIdeaIdx(idx);
     setPickedIdea(idea);
     setPickedSession(session);
+    setPickedSessionIdx(resolvedSIdx);
     setPickedPhoto(session.length > 0 ? session[0] : null);
     setShowPickerModal(false);
     setShowIdeaModal(true);
@@ -5289,9 +5294,9 @@ function ItemScreen({
       fontWeight: "bold",
       color: "#fff"
     }
-  }, getEffIdea(pickedIdea).text.slice(3)), /*#__PURE__*/React.createElement("button", {
+  }, getEffIdea(pickedIdea, pickedSessionIdx).text.slice(3)), /*#__PURE__*/React.createElement("button", {
     onClick: () => {
-      setEditDraft(Object.assign({}, getEffIdea(pickedIdea)));
+      setEditDraft(Object.assign({}, getEffIdea(pickedIdea, pickedSessionIdx)));
       setShowEditModal(true);
     },
     style: {
@@ -5311,13 +5316,13 @@ function ItemScreen({
       marginBottom: 8,
       lineHeight: 1.6
     }
-  }, "👗 ", getEffIdea(pickedIdea).outfit), /*#__PURE__*/React.createElement("div", {
+  }, "👗 ", getEffIdea(pickedIdea, pickedSessionIdx).outfit), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 14,
       color: "#ddd",
       lineHeight: 1.7
     }
-  }, "💋 ", getEffIdea(pickedIdea).scene), /*#__PURE__*/React.createElement("div", {
+  }, "💋 ", getEffIdea(pickedIdea, pickedSessionIdx).scene), /*#__PURE__*/React.createElement("div", {
     style: {
       marginTop: 12,
       textAlign: "center",
@@ -5866,7 +5871,7 @@ function ItemScreen({
       color: T.text,
       lineHeight: 1.4
     }
-  }, getEffIdea(pickedIdea).text.slice(3)), (getEffIdea(pickedIdea).outfit || getEffIdea(pickedIdea).scene) && /*#__PURE__*/React.createElement("div", {
+  }, getEffIdea(pickedIdea, pickedSessionIdx).text.slice(3)), (getEffIdea(pickedIdea, pickedSessionIdx).outfit || getEffIdea(pickedIdea, pickedSessionIdx).scene) && /*#__PURE__*/React.createElement("div", {
     onClick: () => setShowIdeaModal(true),
     style: {
       padding: "10px 16px 14px",
@@ -5878,12 +5883,12 @@ function ItemScreen({
       direction: "rtl",
       cursor: "pointer"
     }
-  }, getEffIdea(pickedIdea).outfit && /*#__PURE__*/React.createElement("div", {
+  }, getEffIdea(pickedIdea, pickedSessionIdx).outfit && /*#__PURE__*/React.createElement("div", {
     style: {
       marginBottom: 6,
       color: T.textS
     }
-  }, "👗 ", getEffIdea(pickedIdea).outfit), getEffIdea(pickedIdea).scene && /*#__PURE__*/React.createElement("div", null, "💋 ", getEffIdea(pickedIdea).scene))))), item.ingredients && item.ingredients.length > 0 && /*#__PURE__*/React.createElement(Section, {
+  }, "👗 ", getEffIdea(pickedIdea, pickedSessionIdx).outfit), getEffIdea(pickedIdea, pickedSessionIdx).scene && /*#__PURE__*/React.createElement("div", null, "💋 ", getEffIdea(pickedIdea, pickedSessionIdx).scene))))), item.ingredients && item.ingredients.length > 0 && /*#__PURE__*/React.createElement(Section, {
     title: "\uD83D\uDED2 \u05DE\u05D4 \u05E6\u05E8\u05D9\u05DA \u05DC\u05E7\u05E0\u05D5\u05EA"
   }, /*#__PURE__*/React.createElement("div", {
     style: {
