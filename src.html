@@ -2589,14 +2589,7 @@ showPasswordModal && /*#__PURE__*/React.createElement(PasswordModal, {
       setShowPasswordModal(false);
       setPasswordError(false);
     },
-    error: passwordError,
-    onFaceId: (passwordTarget === "app_lock" && localStorage.getItem("dn_bio_id")) ? async () => {
-      try {
-        await authenticateBiometric();
-        setShowPasswordModal(false);
-        setPasswordError(false);
-      } catch { setPasswordError(true); }
-    } : null
+    error: passwordError
   }), pendingRating && /*#__PURE__*/React.createElement(PendingRatingPopup, {
     date: pendingRating,
     onClose: () => setPendingRating(null),

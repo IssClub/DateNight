@@ -386,7 +386,7 @@ body.positions-open #positions-book-overlay {
   <div id="root"></div>
 
 <script>
-const BUILD_TS = "26.10.26 09:13";
+const BUILD_TS = "26.10.26 18:16";
 const {
   useState,
   useCallback,
@@ -2714,16 +2714,7 @@ function DateNight() {
       setShowPasswordModal(false);
       setPasswordError(false);
     },
-    error: passwordError,
-    onFaceId: passwordTarget === "app_lock" && localStorage.getItem("dn_bio_id") ? async () => {
-      try {
-        await authenticateBiometric();
-        setShowPasswordModal(false);
-        setPasswordError(false);
-      } catch {
-        setPasswordError(true);
-      }
-    } : null
+    error: passwordError
   }), pendingRating && /*#__PURE__*/React.createElement(PendingRatingPopup, {
     date: pendingRating,
     onClose: () => setPendingRating(null),
