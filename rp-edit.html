@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>עריכת תרחיש</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background: #111;
+    color: #eee;
+    min-height: 100vh;
+    padding: 24px 16px env(safe-area-inset-bottom, 0px);
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .header h1 { font-size: 20px; color: #e8c98a; font-weight: 700; margin-bottom: 4px; }
+  .header .sub { font-size: 13px; color: #666; }
+  .scenario-title {
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 24px;
+    color: #fff;
+    min-height: 28px;
+  }
+  label { display: block; font-size: 13px; color: #aaa; margin-bottom: 6px; margin-top: 18px; }
+  textarea {
+    width: 100%;
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 10px;
+    color: #eee;
+    font-size: 15px;
+    padding: 12px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.6;
+    direction: rtl;
+  }
+  textarea:focus { outline: none; border-color: #e8c98a; }
+  #field-text { height: 56px; }
+  #field-outfit { height: 90px; }
+  #field-scene { height: 140px; }
+  .btn-save {
+    display: block;
+    width: 100%;
+    margin-top: 28px;
+    padding: 15px;
+    background: #c9a84c;
+    color: #111;
+    border: none;
+    border-radius: 14px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .btn-save:disabled { background: #444; color: #777; cursor: not-allowed; }
+  .btn-save:not(:disabled):active { opacity: 0.85; }
+  .status {
+    margin-top: 16px;
+    text-align: center;
+    font-size: 14px;
+    min-height: 22px;
+    color: #e8c98a;
+  }
+  .status.err { color: #e74c3c; }
+  .pat-box {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .pat-box p { font-size: 13px; color: #999; margin-bottom: 10px; line-height: 1.5; }
+  .pat-row { display: flex; gap: 8px; }
+  .pat-input {
+    flex: 1;
+    background: #111;
+    border: 1px solid #444;
+    border-radius: 8px;
+    color: #eee;
+    font-size: 13px;
+    padding: 9px 12px;
+    direction: ltr;
+  }
+  .pat-input:focus { outline: none; border-color: #e8c98a; }
+  .btn-pat {
+    background: #333;
+    border: none;
+    border-radius: 8px;
+    color: #e8c98a;
+    font-size: 13px;
+    padding: 9px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .pat-link { color: #888; font-size: 12px; display: block; margin-top: 8px; }
+  .pat-link a { color: #e8c98a; }
+  a { color: #e8c98a; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>✏️ עריכת תרחיש</h1>
+  <div class="sub" id="sub-label">טוען...</div>
+</div>
+
+<div class="pat-box" id="pat-box">
+  <p>נדרש GitHub Token לשמירה. צור טוקן עם הרשאת <strong>repo</strong> ב-GitHub:</p>
+  <div class="pat-row">
+    <input class="pat-input" id="pat-input" type="password" placeholder="ghp_xxxxxxxxxx" />
+    <button class="btn-pat" onclick="savePat()">שמור</button>
+  </div>
+  <span class="pat-link"><a href="https://github.com/settings/tokens/new?scopes=repo&description=DateNight+Edit" target="_blank">→ צור טוקן חדש (repo scope)</a></span>
+</div>
+
+<div class="scenario-title" id="scenario-title"></div>
+
+<label for="field-text">שם התרחיש</label>
+<textarea id="field-text" placeholder="🕵️ חוקרת ועד — חקירה בחדר חשוך"></textarea>
+
+<label for="field-outfit">👗 לבוש</label>
+<textarea id="field-outfit" placeholder="תיאור הלבוש..."></textarea>
+
+<label for="field-scene">💋 סצנה</label>
+<textarea id="field-scene" placeholder="תיאור הסצנה..."></textarea>
+
+<button class="btn-save" id="btn-save" onclick="doSave()">💾 שמור ופרסם</button>
+<div class="status" id="status"></div>
+
+<script>
+const REPO = 'IssClub/DateNight';
+const FILE = 'roleplay-meta.json';
+const PAT_KEY = 'gh_pat_datenight';
+
+const params = new URLSearchParams(location.search);
+const scenarioId = params.get('s') || '';
+const sessionIdx = parseInt(params.get('n') || '0', 10);
+
+let currentMeta = null;
+let currentSha = null;
+
+function getPat() { try { return localStorage.getItem(PAT_KEY) || ''; } catch { return ''; } }
+function savePat() {
+  const v = document.getElementById('pat-input').value.trim();
+  if (!v) return;
+  try { localStorage.setItem(PAT_KEY, v); } catch {}
+  document.getElementById('pat-box').style.display = 'none';
+  setStatus('Token שמור ✓');
+}
+
+async function init() {
+  if (!scenarioId) { setStatus('חסרים פרמטרים בURL', true); return; }
+  document.getElementById('sub-label').textContent = `${scenarioId} / סשן ${sessionIdx + 1}`;
+
+  if (getPat()) document.getElementById('pat-box').style.display = 'none';
+
+  try {
+    const res = await fetch('/roleplay-meta.json?_=' + Date.now());
+    currentMeta = await res.json();
+  } catch {
+    setStatus('שגיאה בטעינת roleplay-meta.json', true);
+    return;
+  }
+
+  const arr = currentMeta[scenarioId];
+  const slot = (Array.isArray(arr) && arr[sessionIdx]) ? arr[sessionIdx] : {};
+
+  document.getElementById('field-text').value = slot.text || '';
+  document.getElementById('field-outfit').value = slot.outfit || '';
+  document.getElementById('field-scene').value = slot.scene || '';
+
+  const title = slot.text || scenarioId;
+  document.getElementById('scenario-title').textContent = title;
+}
+
+async function doSave() {
+  const pat = getPat();
+  if (!pat) { document.getElementById('pat-box').style.display = ''; setStatus('נדרש Token', true); return; }
+
+  const text = document.getElementById('field-text').value.trim();
+  const outfit = document.getElementById('field-outfit').value.trim();
+  const scene = document.getElementById('field-scene').value.trim();
+
+  const btn = document.getElementById('btn-save');
+  btn.disabled = true;
+  setStatus('שומר...');
+
+  try {
+    // Get current file sha
+    const infoRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
+      headers: { Authorization: 'token ' + pat, Accept: 'application/vnd.github.v3+json' }
+    });
+    if (!infoRes.ok) throw new Error('שגיאת GitHub ' + infoRes.status);
+    const info = await infoRes.json();
+    currentSha = info.sha;
+    const existing = JSON.parse(atob(info.content.replace(/\n/g, '')));
+
+    // Update the specific slot
+    if (!Array.isArray(existing[scenarioId])) existing[scenarioId] = [{}];
+    while (existing[scenarioId].length <= sessionIdx) existing[scenarioId].push({});
+    existing[scenarioId][sessionIdx] = { text, outfit, scene };
+
+    // Commit
+    const body = JSON.stringify({
+      message: `edit: ${scenarioId} session ${sessionIdx + 1}`,
+      content: btoa(unescape(encodeURIComponent(JSON.stringify(existing, null, 2)))),
+      sha: currentSha
+    });
+    const saveRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
+      method: 'PUT',
+      headers: { Authorization: 'token ' + pat, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body
+    });
+    if (!saveRes.ok) throw new Error('שגיאת שמירה ' + saveRes.status);
+    setStatus('✅ נשמר! Netlify פורסם תוך ~30 שניות');
+    document.getElementById('scenario-title').textContent = text || scenarioId;
+  } catch(e) {
+    setStatus('שגיאה: ' + e.message, true);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function setStatus(msg, isErr) {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = 'status' + (isErr ? ' err' : '');
+}
+
+init();
+</script>
+</body>
+</html>
