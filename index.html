@@ -386,7 +386,7 @@ body.positions-open #positions-book-overlay {
   <div id="root"></div>
 
 <script>
-const BUILD_TS = "25.10.26 16:56";
+const BUILD_TS = "26.10.26 08:11";
 const {
   useState,
   useCallback,
@@ -2419,14 +2419,6 @@ function DateNight() {
     if (localStorage.getItem("dn_app_lock") === "1") {
       setPasswordTarget("app_lock");
       setShowPasswordModal(true);
-      if (localStorage.getItem("dn_bio_id")) {
-        (async () => {
-          try {
-            await authenticateBiometric();
-            setShowPasswordModal(false);
-          } catch {}
-        })();
-      }
     }
   }, [splashDone]);
   const [pendingRating, setPendingRating] = useState(null); // דייט שמחכה לדירוג
