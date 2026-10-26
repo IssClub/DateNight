@@ -2280,7 +2280,10 @@ function SplashWithPin({
       justifyContent: "center",
       WebkitTapHighlightColor: "transparent"
     }
-  }, d))), error && /*#__PURE__*/React.createElement("p", {
+  }, d))), localStorage.getItem("dn_bio_id") && /*#__PURE__*/React.createElement("button", {
+    onClick: async () => { try { await authenticateBiometric(); onUnlocked(); } catch {} },
+    style: { background: "rgba(232,201,160,0.1)", border: "1.5px solid rgba(232,201,160,0.3)", borderRadius: 14, color: "#e8c98a", fontFamily: "'Helvetica Neue', Arial, sans-serif", fontSize: 15, fontWeight: 600, padding: "13px 28px", marginTop: 28, cursor: "pointer", WebkitTapHighlightColor: "transparent", display: "block" }
+  }, "\uD83E\uDEA6 \u05DB\u05E0\u05D9\u05E1\u05D4 \u05E2\u05DD \u05D6\u05D9\u05D4\u05D5\u05D9 \u05E4\u05E0\u05D9\u05DD"), error && /*#__PURE__*/React.createElement("p", {
     style: {
       color: "#ef4444",
       marginTop: 24,
@@ -7158,12 +7161,12 @@ function SettingsScreen({ darkMode, setDarkMode, goHome }) {
         rowLabel("נעל אפליקציה בפתיחה", "דרוש סיסמה בכל פתיחה"),
         React.createElement(Toggle, { value: appLock, onChange: handleAppLockToggle })
       )),
-      appLock ? row(React.createElement(React.Fragment, null,
+      row(React.createElement(React.Fragment, null,
         rowLabel("כניסה עם Face ID", bioMsg || (bioRegistered ? "פעיל — לחץ להסרה" : "הפעל זיהוי פנים לכניסה מהירה")),
         bioRegistered
           ? actionBtn("הסר", handleDeactivateAppFaceId, true)
           : actionBtn("הפעל", handleActivateAppFaceId)
-      )) : null
+      ))
     )
   );
 }
