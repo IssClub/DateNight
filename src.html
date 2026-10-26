@@ -4942,6 +4942,10 @@ function ItemScreen({
   const [pickedSession, setPickedSession] = useState([]);
   const [slideIdx, setSlideIdx] = useState(0);
   const [showIdeaModal, setShowIdeaModal] = useState(false);
+  const [rpMeta, setRpMeta] = useState({});
+  useEffect(() => {
+    fetch('/roleplay-meta.json').then(r => r.json()).then(setRpMeta).catch(() => {});
+  }, []);;
   const [lastIdeaIdx, setLastIdeaIdx] = useState(-1);
   const [roleplayData, setRoleplayData] = useState({});
   const [showEditModal, setShowEditModal] = useState(false);
@@ -4959,8 +4963,10 @@ function ItemScreen({
   }, [showIdeaModal, pickedSession]);
   const getEffIdea = (idea) => {
     try {
+      const meta = rpMeta[idea.id];
+      const base = meta ? Object.assign({}, idea, meta) : idea;
       const s = localStorage.getItem('rp_' + idea.id);
-      return s ? Object.assign({}, idea, JSON.parse(s)) : idea;
+      return s ? Object.assign({}, base, JSON.parse(s)) : base;
     } catch(e) { return idea; }
   };
   const saveEdit = () => {
