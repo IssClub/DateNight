@@ -2281,7 +2281,7 @@ function SplashWithPin({
       WebkitTapHighlightColor: "transparent"
     }
   }, d))), localStorage.getItem("dn_bio_id") && /*#__PURE__*/React.createElement("button", {
-    onClick: async () => { try { await authenticateBiometric(); onUnlocked(); } catch {} },
+    onClick: async () => { try { await authenticateBiometric(); onUnlocked(true); } catch {} },
     style: { background: "rgba(232,201,160,0.1)", border: "1.5px solid rgba(232,201,160,0.3)", borderRadius: 14, color: "#e8c98a", fontFamily: "'Helvetica Neue', Arial, sans-serif", fontSize: 15, fontWeight: 600, padding: "13px 28px", marginTop: 28, cursor: "pointer", WebkitTapHighlightColor: "transparent", display: "block" }
   }, "\uD83E\uDEA6 \u05DB\u05E0\u05D9\u05E1\u05D4 \u05E2\u05DD \u05D6\u05D9\u05D4\u05D5\u05D9 \u05E4\u05E0\u05D9\u05DD"), error && /*#__PURE__*/React.createElement("p", {
     style: {
@@ -2565,7 +2565,7 @@ function DateNight() {
     }
   })();
   if (!splashDone) return /*#__PURE__*/React.createElement(SplashWithPin, {
-    onUnlocked: () => setSplashDone(true)
+    onUnlocked: (biometric) => { setSplashDone(true); if (biometric) setAppLockChecked(true); }
   });
   return /*#__PURE__*/React.createElement("div", {
     className: "app-shell",
