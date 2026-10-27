@@ -159,7 +159,7 @@ async function init() {
   if (getPat()) document.getElementById('pat-box').style.display = 'none';
 
   try {
-    const res = await fetch('/roleplay-meta.json?_=' + Date.now());
+    const res = await fetch('roleplay-meta.json?_=' + Date.now());
     currentMeta = await res.json();
   } catch {
     setStatus('שגיאה בטעינת roleplay-meta.json', true);
