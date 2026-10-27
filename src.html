@@ -4960,8 +4960,18 @@ function ItemScreen({
   React.useEffect(() => {
     if (!showIdeaModal || pickedSession.length <= 1) { setSlideIdx(0); return; }
     setSlideIdx(0);
-    const t = setInterval(() => setSlideIdx(i => (i + 1) % pickedSession.length), 2000);
-    return () => clearInterval(t);
+    let t;
+    const schedule = (idx) => {
+      const last = pickedSession.length - 1;
+      const delay = (idx === 0 || idx === last) ? 3000 : 2000;
+      t = setTimeout(() => {
+        const next = (idx + 1) % pickedSession.length;
+        setSlideIdx(next);
+        schedule(next);
+      }, delay);
+    };
+    schedule(0);
+    return () => clearTimeout(t);
   }, [showIdeaModal, pickedSession]);
   const getEffIdea = (idea, sIdx = 0) => {
     try {

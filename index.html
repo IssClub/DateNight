@@ -386,7 +386,7 @@ body.positions-open #positions-book-overlay {
   <div id="root"></div>
 
 <script>
-const BUILD_TS = "27.10.26 08:23";
+const BUILD_TS = "27.10.26 08:25";
 const {
   useState,
   useCallback,
@@ -5166,8 +5166,18 @@ function ItemScreen({
       return;
     }
     setSlideIdx(0);
-    const t = setInterval(() => setSlideIdx(i => (i + 1) % pickedSession.length), 2000);
-    return () => clearInterval(t);
+    let t;
+    const schedule = idx => {
+      const last = pickedSession.length - 1;
+      const delay = idx === 0 || idx === last ? 3000 : 2000;
+      t = setTimeout(() => {
+        const next = (idx + 1) % pickedSession.length;
+        setSlideIdx(next);
+        schedule(next);
+      }, delay);
+    };
+    schedule(0);
+    return () => clearTimeout(t);
   }, [showIdeaModal, pickedSession]);
   const getEffIdea = (idea, sIdx = 0) => {
     try {
