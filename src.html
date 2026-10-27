@@ -4946,7 +4946,7 @@ function ItemScreen({
   const [rpMeta, setRpMeta] = useState({});
   const [editToast, setEditToast] = useState(false);
   useEffect(() => {
-    fetch('/roleplay-meta.json').then(r => r.json()).then(setRpMeta).catch(() => {});
+    fetch('roleplay-meta.json').then(r => r.json()).then(setRpMeta).catch(() => {});
   }, []);;
   const [lastIdeaIdx, setLastIdeaIdx] = useState(-1);
   const [roleplayData, setRoleplayData] = useState({});

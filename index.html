@@ -386,7 +386,7 @@ body.positions-open #positions-book-overlay {
   <div id="root"></div>
 
 <script>
-const BUILD_TS = "27.10.26 08:57";
+const BUILD_TS = "27.10.26 09:00";
 const {
   useState,
   useCallback,
@@ -5148,7 +5148,7 @@ function ItemScreen({
   const [rpMeta, setRpMeta] = useState({});
   const [editToast, setEditToast] = useState(false);
   useEffect(() => {
-    fetch('/roleplay-meta.json').then(r => r.json()).then(setRpMeta).catch(() => {});
+    fetch('roleplay-meta.json').then(r => r.json()).then(setRpMeta).catch(() => {});
   }, []);
   ;
   const [lastIdeaIdx, setLastIdeaIdx] = useState(-1);
