@@ -5052,7 +5052,7 @@ function ItemScreen({
     style: { fontSize: 17, fontWeight: "bold", color: "#fff" }
   }, getEffIdea(pickedIdea, pickedSessionIdx).text.slice(3)), /*#__PURE__*/React.createElement("button", {
     onClick: () => {
-      const url = `${location.origin}/rp-edit.html?s=${pickedIdea.id}&n=${pickedSessionIdx}`;
+      const url = new URL(`rp-edit.html?s=${pickedIdea.id}&n=${pickedSessionIdx}`, location.href).href;
       navigator.clipboard.writeText(url).catch(() => {});
       setEditToast(true);
       setTimeout(() => setEditToast(false), 2000);
