@@ -131,6 +131,9 @@
 
 <button class="btn-save" id="btn-save" onclick="doSave()">💾 שמור ופרסם</button>
 <div class="status" id="status"></div>
+<div style="text-align:center;margin-top:20px;">
+  <button onclick="changePat()" style="background:none;border:none;color:#555;font-size:12px;cursor:pointer;text-decoration:underline;">שנה GitHub Token</button>
+</div>
 
 <script>
 const REPO = 'IssClub/DateNight';
@@ -225,6 +228,13 @@ async function doSave() {
   } finally {
     btn.disabled = false;
   }
+}
+
+function changePat() {
+  try { localStorage.removeItem(PAT_KEY); } catch {}
+  document.getElementById('pat-input').value = '';
+  document.getElementById('pat-box').style.display = '';
+  setStatus('');
 }
 
 function setStatus(msg, isErr) {
