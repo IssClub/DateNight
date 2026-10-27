@@ -221,7 +221,7 @@ async function doSave() {
       body
     });
     if (!saveRes.ok) throw new Error('שגיאת שמירה ' + saveRes.status);
-    setStatus('✅ נשמר! Netlify פורסם תוך ~30 שניות');
+    setStatus('✅ נשמר! GitHub Pages יתעדכן תוך ~2 דקות');
     document.getElementById('scenario-title').textContent = text || scenarioId;
   } catch(e) {
     setStatus('שגיאה: ' + e.message, true);
