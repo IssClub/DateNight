@@ -165,7 +165,7 @@ async function saveTokenToGitHub(pat) {
     });
     if (!infoRes.ok) { setStatus('Token שמור מקומית ✓'); return; }
     const info = await infoRes.json();
-    const existing = JSON.parse(atob(info.content.replace(/\n/g, '')));
+    const existing = JSON.parse(decodeURIComponent(escape(atob(info.content.replace(/\n/g, '')))));
     existing._token = pat;
     const body = JSON.stringify({
       message: 'config: sync token cross-device',
@@ -233,7 +233,7 @@ async function doSave() {
     if (!infoRes.ok) throw new Error('שגיאת GitHub ' + infoRes.status);
     const info = await infoRes.json();
     currentSha = info.sha;
-    const existing = JSON.parse(atob(info.content.replace(/\n/g, '')));
+    const existing = JSON.parse(decodeURIComponent(escape(atob(info.content.replace(/\n/g, '')))));
 
     // Update the specific slot
     if (!Array.isArray(existing[scenarioId])) existing[scenarioId] = [{}];
