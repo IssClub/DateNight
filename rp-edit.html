@@ -148,28 +148,59 @@ let currentMeta = null;
 let currentSha = null;
 
 function getPat() { try { return localStorage.getItem(PAT_KEY) || ''; } catch { return ''; } }
-function savePat() {
+
+async function savePat() {
   const v = document.getElementById('pat-input').value.trim();
   if (!v) return;
   try { localStorage.setItem(PAT_KEY, v); } catch {}
   document.getElementById('pat-box').style.display = 'none';
-  setStatus('Token שמור ✓');
+  setStatus('שומר Token...');
+  await saveTokenToGitHub(v);
+}
+
+async function saveTokenToGitHub(pat) {
+  try {
+    const infoRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
+      headers: { Authorization: 'token ' + pat, Accept: 'application/vnd.github.v3+json' }
+    });
+    if (!infoRes.ok) { setStatus('Token שמור מקומית ✓'); return; }
+    const info = await infoRes.json();
+    const existing = JSON.parse(atob(info.content.replace(/\n/g, '')));
+    existing._token = pat;
+    const body = JSON.stringify({
+      message: 'config: sync token cross-device',
+      content: btoa(unescape(encodeURIComponent(JSON.stringify(existing, null, 2)))),
+      sha: info.sha
+    });
+    const saveRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
+      method: 'PUT',
+      headers: { Authorization: 'token ' + pat, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body
+    });
+    setStatus(saveRes.ok ? 'Token שמור ✓ (מסונכרן לכל המכשירים)' : 'Token שמור מקומית ✓');
+  } catch {
+    setStatus('Token שמור מקומית ✓');
+  }
 }
 
 async function init() {
   if (!scenarioId) { setStatus('חסרים פרמטרים בURL', true); return; }
   document.getElementById('sub-label').textContent = `${scenarioId} / סשן ${sessionIdx + 1}`;
 
-  if (getPat()) document.getElementById('pat-box').style.display = 'none';
-
   try {
     const base = location.href.replace(/[^/]+(\?.*)?$/, '');
     const res = await fetch(base + 'roleplay-meta.json?_=' + Date.now());
     currentMeta = await res.json();
+    if (currentMeta._token && !getPat()) {
+      try { localStorage.setItem(PAT_KEY, currentMeta._token); } catch {}
+      document.getElementById('pat-box').style.display = 'none';
+    }
   } catch {
     setStatus('שגיאה בטעינת roleplay-meta.json', true);
     return;
   }
+
+  if (getPat()) document.getElementById('pat-box').style.display = 'none';
 
   const arr = currentMeta[scenarioId];
   const slot = (Array.isArray(arr) && arr[sessionIdx]) ? arr[sessionIdx] : {};
