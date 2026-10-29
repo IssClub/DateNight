@@ -386,7 +386,7 @@ body.positions-open #positions-book-overlay {
   <div id="modal-root"></div>
 
 <script>
-const BUILD_TS = "29.10.26 09:37";
+const BUILD_TS = "29.10.26 16:53";
 const {
   useState,
   useCallback,
@@ -5126,6 +5126,173 @@ function SubcatScreen({
 // ITEM DETAIL SCREEN
 // ============================================================
 
+// Pinch-to-zoom image (two fingers), pan when zoomed, tap while zoomed resets
+function ZoomableImg({
+  src,
+  onZoomChange
+}) {
+  const boxRef = useRef(null);
+  const [view, setView] = useState({
+    s: 1,
+    x: 0,
+    y: 0
+  });
+  const v = useRef(view);
+  const g = useRef(null);
+  const gestureAt = useRef(0);
+  const apply = next => {
+    if (next.s <= 1.02) next = {
+      s: 1,
+      x: 0,
+      y: 0
+    };
+    const was = v.current.s > 1;
+    v.current = next;
+    setView(next);
+    if (was !== next.s > 1 && onZoomChange) onZoomChange(next.s > 1);
+  };
+  useEffect(() => {
+    apply({
+      s: 1,
+      x: 0,
+      y: 0
+    });
+  }, [src]);
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!el) return;
+    const center = () => {
+      const r = el.getBoundingClientRect();
+      return {
+        cx: r.left + r.width / 2,
+        cy: r.top + r.height / 2
+      };
+    };
+    const mid = t => ({
+      x: (t[0].clientX + t[1].clientX) / 2,
+      y: (t[0].clientY + t[1].clientY) / 2
+    });
+    const dist = t => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+    const start = e => {
+      const t = e.touches;
+      if (t.length === 2) {
+        e.preventDefault();
+        const {
+            cx,
+            cy
+          } = center(),
+          m = mid(t),
+          cur = v.current;
+        g.current = {
+          type: "pinch",
+          d: dist(t),
+          s: cur.s,
+          px: (m.x - cx - cur.x) / cur.s,
+          py: (m.y - cy - cur.y) / cur.s
+        };
+        gestureAt.current = Date.now();
+      } else if (t.length === 1 && v.current.s > 1) {
+        g.current = {
+          type: "pan",
+          sx: t[0].clientX,
+          sy: t[0].clientY,
+          x: v.current.x,
+          y: v.current.y,
+          moved: false
+        };
+      }
+    };
+    const move = e => {
+      const t = e.touches,
+        st = g.current;
+      if (!st) return;
+      if (st.type === "pinch" && t.length === 2) {
+        e.preventDefault();
+        const {
+            cx,
+            cy
+          } = center(),
+          m = mid(t);
+        const s = Math.min(5, Math.max(1, st.s * dist(t) / st.d));
+        apply({
+          s,
+          x: m.x - cx - s * st.px,
+          y: m.y - cy - s * st.py
+        });
+      } else if (st.type === "pan" && t.length === 1) {
+        e.preventDefault();
+        const dx = t[0].clientX - st.sx,
+          dy = t[0].clientY - st.sy;
+        if (Math.abs(dx) + Math.abs(dy) > 6) {
+          st.moved = true;
+          gestureAt.current = Date.now();
+        }
+        apply({
+          s: v.current.s,
+          x: st.x + dx,
+          y: st.y + dy
+        });
+      }
+    };
+    const end = e => {
+      if (g.current && (g.current.type === "pinch" || g.current.moved)) gestureAt.current = Date.now();
+      if (e.touches.length === 0) g.current = null;else if (e.touches.length === 1 && v.current.s > 1) start(e);
+    };
+    const noGesture = e => e.preventDefault();
+    el.addEventListener("touchstart", start, {
+      passive: false
+    });
+    el.addEventListener("touchmove", move, {
+      passive: false
+    });
+    el.addEventListener("touchend", end);
+    el.addEventListener("touchcancel", end);
+    el.addEventListener("gesturestart", noGesture);
+    return () => {
+      el.removeEventListener("touchstart", start);
+      el.removeEventListener("touchmove", move);
+      el.removeEventListener("touchend", end);
+      el.removeEventListener("touchcancel", end);
+      el.removeEventListener("gesturestart", noGesture);
+    };
+  }, []);
+  const onClick = e => {
+    if (Date.now() - gestureAt.current < 400) e.stopPropagation();else if (v.current.s > 1) {
+      e.stopPropagation();
+      apply({
+        s: 1,
+        x: 0,
+        y: 0
+      });
+    }
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    ref: boxRef,
+    onClick: onClick,
+    style: {
+      flex: 1,
+      minHeight: 0,
+      overflow: "hidden",
+      position: "relative",
+      touchAction: "none"
+    }
+  }, /*#__PURE__*/React.createElement("img", {
+    src: src,
+    alt: "",
+    draggable: false,
+    style: {
+      width: "100%",
+      height: "100%",
+      objectFit: "contain",
+      display: "block",
+      transform: `translate(${view.x}px, ${view.y}px) scale(${view.s})`,
+      transformOrigin: "center center",
+      transition: g.current ? "none" : "transform 0.2s ease-out",
+      userSelect: "none",
+      WebkitUserSelect: "none"
+    }
+  }));
+}
 function ItemScreen({
   item,
   cat,
@@ -5145,6 +5312,8 @@ function ItemScreen({
   const [pickedSessionIdx, setPickedSessionIdx] = useState(0);
   const [slideIdx, setSlideIdx] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [zoomed, setZoomed] = useState(false);
+  const slideIdxRef = useRef(0);
   const [captionExpanded, setCaptionExpanded] = useState(false);
   const [showIdeaModal, setShowIdeaModal] = useState(false);
   const [rpMeta, setRpMeta] = useState({});
@@ -5163,25 +5332,26 @@ function ItemScreen({
     fetch('roleplay.json').then(r => r.json()).then(setRoleplayData).catch(() => {});
   }, []);
   React.useEffect(() => {
-    if (!showIdeaModal || pickedSession.length <= 1) {
-      setSlideIdx(0);
-      return;
-    }
-    if (paused) return;
     setSlideIdx(0);
+    slideIdxRef.current = 0;
+  }, [showIdeaModal, pickedSession]);
+  React.useEffect(() => {
+    if (!showIdeaModal || pickedSession.length <= 1) return;
+    if (paused || zoomed) return;
     let t;
     const schedule = idx => {
       const last = pickedSession.length - 1;
       const delay = idx === 0 || idx === last ? 3000 : 2000;
       t = setTimeout(() => {
         const next = (idx + 1) % pickedSession.length;
+        slideIdxRef.current = next;
         setSlideIdx(next);
         schedule(next);
       }, delay);
     };
-    schedule(0);
+    schedule(slideIdxRef.current);
     return () => clearTimeout(t);
-  }, [showIdeaModal, pickedSession, paused]);
+  }, [showIdeaModal, pickedSession, paused, zoomed]);
   const getEffIdea = (idea, sIdx = 0) => {
     try {
       const metaArr = rpMeta[idea.id];
@@ -5265,6 +5435,7 @@ function ItemScreen({
     onClick: () => {
       setShowIdeaModal(false);
       setPaused(false);
+      setZoomed(false);
       setCaptionExpanded(false);
     },
     style: {
@@ -5280,33 +5451,40 @@ function ItemScreen({
       e.stopPropagation();
       setPaused(p => !p);
     },
+    "aria-label": paused ? "המשך" : "השהה",
     style: {
       position: "absolute",
-      top: 16,
+      top: "calc(env(safe-area-inset-top, 0px) + 12px)",
       right: 16,
       zIndex: 2,
-      background: "rgba(0,0,0,0.55)",
-      border: "none",
+      background: "rgba(0,0,0,0.6)",
+      border: "1px solid rgba(255,255,255,0.35)",
       borderRadius: "50%",
-      width: 42,
-      height: 42,
+      width: 48,
+      height: 48,
       color: "#fff",
-      fontSize: 20,
+      fontSize: 22,
       cursor: "pointer",
       display: "flex",
       alignItems: "center",
       justifyContent: "center"
     }
-  }, paused ? "▶" : "⏸"), pickedSession.length > 0 && /*#__PURE__*/React.createElement("img", {
-    src: pickedSession[slideIdx],
-    alt: "",
+  }, paused || zoomed ? "▶" : "⏸"), pickedSession.length > 1 && /*#__PURE__*/React.createElement("div", {
     style: {
-      flex: 1,
-      width: "100%",
-      objectFit: "contain",
-      display: "block",
-      minHeight: 0
+      position: "absolute",
+      top: "calc(env(safe-area-inset-top, 0px) + 26px)",
+      left: 16,
+      zIndex: 2,
+      color: "rgba(255,255,255,0.8)",
+      fontSize: 13,
+      background: "rgba(0,0,0,0.5)",
+      borderRadius: 10,
+      padding: "2px 8px",
+      pointerEvents: "none"
     }
+  }, slideIdx + 1, "/", pickedSession.length), pickedSession.length > 0 && /*#__PURE__*/React.createElement(ZoomableImg, {
+    src: pickedSession[slideIdx],
+    onZoomChange: setZoomed
   }), pickedSession.length === 0 && /*#__PURE__*/React.createElement("div", {
     style: {
       flex: 1,
@@ -5319,7 +5497,7 @@ function ItemScreen({
     onClick: e => e.stopPropagation(),
     style: {
       background: "#111",
-      padding: "16px 20px",
+      padding: "16px 20px calc(16px + env(safe-area-inset-bottom, 0px))",
       direction: "rtl",
       maxHeight: "50vh",
       overflowY: "auto"
@@ -5379,26 +5557,29 @@ function ItemScreen({
   }, "👗 ", getEffIdea(pickedIdea, pickedSessionIdx).outfit), /*#__PURE__*/React.createElement("div", {
     onClick: () => setCaptionExpanded(e => !e),
     style: {
+      cursor: "pointer",
+      WebkitTapHighlightColor: "transparent"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
       fontSize: 14,
       color: "#ddd",
       lineHeight: 1.7,
-      cursor: "pointer",
       ...(captionExpanded ? {} : {
         display: "-webkit-box",
-        WebkitLineClamp: 3,
+        WebkitLineClamp: 2,
         WebkitBoxOrient: "vertical",
         overflow: "hidden"
       })
     }
-  }, "💋 ", getEffIdea(pickedIdea, pickedSessionIdx).scene), !captionExpanded && /*#__PURE__*/React.createElement("div", {
-    onClick: () => setCaptionExpanded(true),
+  }, "💋 ", getEffIdea(pickedIdea, pickedSessionIdx).scene), /*#__PURE__*/React.createElement("div", {
     style: {
-      color: "#888",
-      fontSize: 12,
-      marginTop: 4,
-      cursor: "pointer"
+      color: "#aaa",
+      fontSize: 13,
+      fontWeight: "bold",
+      marginTop: 4
     }
-  }, "...עוד"), /*#__PURE__*/React.createElement("div", {
+  }, captionExpanded ? "הצג פחות" : "...עוד")), /*#__PURE__*/React.createElement("div", {
     style: {
       marginTop: 12,
       textAlign: "center",
