@@ -383,6 +383,7 @@ body.positions-open #positions-book-overlay {
 </head>
 <body>
   <div id="root"></div>
+  <div id="modal-root"></div>
 
 <script type="text/babel">
 const BUILD_TS = "BUILD_TS";
@@ -5047,7 +5048,7 @@ function ItemScreen({
   }, showPinModal && /*#__PURE__*/React.createElement(PinDateModal, {
     item: item,
     onClose: () => setShowPinModal(false)
-  }), showIdeaModal && pickedIdea && /*#__PURE__*/React.createElement("div", {
+  }), showIdeaModal && pickedIdea && ReactDOM.createPortal(/*#__PURE__*/React.createElement("div", {
     onClick: () => { setShowIdeaModal(false); setPaused(false); setCaptionExpanded(false); },
     style: { position: "fixed", inset: 0, zIndex: 10001, background: "#000", display: "flex", flexDirection: "column" }
   }, pickedSession.length > 1 && /*#__PURE__*/React.createElement("button", {
@@ -5086,7 +5087,7 @@ function ItemScreen({
     style: { color: "#888", fontSize: 12, marginTop: 4, cursor: "pointer" }
   }, "...עוד"), /*#__PURE__*/React.createElement("div", {
     style: { marginTop: 12, textAlign: "center", fontSize: 12, color: "#555" }
-  }, "לחץ מחוץ לטקסט לסגירה"))), showEditModal && editDraft && /*#__PURE__*/React.createElement("div", {
+  }, "לחץ מחוץ לטקסט לסגירה"))), document.getElementById('modal-root')), showEditModal && editDraft && /*#__PURE__*/React.createElement("div", {
     onClick: () => { setShowEditModal(false); setEditDraft(null); },
     style: { position: "fixed", inset: 0, zIndex: 10002, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "flex-end" }
   }, /*#__PURE__*/React.createElement("div", {
@@ -5125,7 +5126,7 @@ function ItemScreen({
   }, "אפס"), /*#__PURE__*/React.createElement("button", {
     onClick: () => { setShowEditModal(false); setEditDraft(null); },
     style: { flex: 1, background: "#222", color: "#888", border: "none", borderRadius: 12, padding: "12px", fontSize: 15, cursor: "pointer" }
-  }, "ביטול")))), showPickerModal && item.ideas && /*#__PURE__*/React.createElement("div", {
+  }, "ביטול")))), showPickerModal && item.ideas && ReactDOM.createPortal(/*#__PURE__*/React.createElement("div", {
     onClick: () => setShowPickerModal(false),
     style: { position: "fixed", inset: 0, zIndex: 10000, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "flex-end" }
   }, /*#__PURE__*/React.createElement("div", {
@@ -5138,7 +5139,7 @@ function ItemScreen({
   }, item.ideas.map((idea, idx) => { const rp = idea.photoKey && roleplayData[idea.photoKey]; const cnt = (rp && rp.length > 0) ? rp.length : 1; const sn = idea.text.split("—")[0].trim(); if (cnt <= 1) { return /*#__PURE__*/React.createElement("button", { key: idea.id, onClick: () => pickIdea(idx, 0), style: { background: "#2a0a1a", color: "#f0c0d8", border: "1px solid #5a1a3a", borderRadius: 12, padding: "10px 8px", fontSize: 12, cursor: "pointer", textAlign: "center", direction: "rtl", lineHeight: 1.3, opacity: seenPairs.has(idx + "-0") ? 0.35 : 1 } }, sn); } return /*#__PURE__*/React.createElement("div", { key: idea.id, style: { display: "flex", gap: 4 } }, /*#__PURE__*/React.createElement("button", { onClick: () => pickIdea(idx), style: { flex: 1, background: "#2a0a1a", color: "#f0c0d8", border: "1px solid #5a1a3a", borderRadius: 12, padding: "10px 8px", fontSize: 12, cursor: "pointer", textAlign: "center", direction: "rtl", lineHeight: 1.3, opacity: Array.from({length: cnt}, (_, j) => seenPairs.has(idx + "-" + j)).every(Boolean) ? 0.35 : 1 } }, sn), ...Array.from({length: cnt}, (_, j) => /*#__PURE__*/React.createElement("button", { key: j, onClick: () => pickIdea(idx, j), style: { width: 30, flexShrink: 0, background: "#3a0820", color: "#f0c0d8", border: "1px solid #5a1a3a", borderRadius: 10, padding: "8px 2px", fontSize: 13, fontWeight: "bold", cursor: "pointer", opacity: seenPairs.has(idx + "-" + j) ? 0.35 : 1 } }, j + 1))); }))), /*#__PURE__*/React.createElement("div", { style: { padding: "8px 16px calc(16px + env(safe-area-inset-bottom, 0px))", flexShrink: 0 } }, /*#__PURE__*/React.createElement("button", {
     onClick: () => { if (!item.ideas || !item.ideas.length) return; const allP = item.ideas.flatMap((x, i) => { const s = x.photoKey && roleplayData[x.photoKey]; const c = (s && s.length > 0) ? s.length : 1; return Array.from({length: c}, (_, j) => ({i, j})); }); const unseen = allP.filter(p => !seenPairs.has(p.i + "-" + p.j)); const pool = unseen.length > 0 ? unseen : allP; const pick = pool[Math.floor(Math.random() * pool.length)]; pickIdea(pick.i, pick.j); },
     style: { width: "100%", background: "linear-gradient(135deg, #800040, #4a0030)", color: "#fff", border: "none", borderRadius: 16, padding: "16px 24px", fontSize: 19, fontWeight: "bold", cursor: "pointer", boxShadow: "0 4px 14px rgba(128,0,64,0.45)" }
-  }, "🎲 תרחיש רנדומלי")))), /*#__PURE__*/React.createElement("div", {
+  }, "🎲 תרחיש רנדומלי")))), document.getElementById('modal-root')), /*#__PURE__*/React.createElement("div", {
     style: {
       position: "relative"
     }

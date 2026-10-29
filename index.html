@@ -383,9 +383,10 @@ body.positions-open #positions-book-overlay {
 </head>
 <body>
   <div id="root"></div>
+  <div id="modal-root"></div>
 
 <script>
-const BUILD_TS = "29.10.26 08:46";
+const BUILD_TS = "29.10.26 09:37";
 const {
   useState,
   useCallback,
@@ -5260,7 +5261,7 @@ function ItemScreen({
   }, showPinModal && /*#__PURE__*/React.createElement(PinDateModal, {
     item: item,
     onClose: () => setShowPinModal(false)
-  }), showIdeaModal && pickedIdea && /*#__PURE__*/React.createElement("div", {
+  }), showIdeaModal && pickedIdea && ReactDOM.createPortal(/*#__PURE__*/React.createElement("div", {
     onClick: () => {
       setShowIdeaModal(false);
       setPaused(false);
@@ -5404,7 +5405,7 @@ function ItemScreen({
       fontSize: 12,
       color: "#555"
     }
-  }, "לחץ מחוץ לטקסט לסגירה"))), showEditModal && editDraft && /*#__PURE__*/React.createElement("div", {
+  }, "לחץ מחוץ לטקסט לסגירה"))), document.getElementById('modal-root')), showEditModal && editDraft && /*#__PURE__*/React.createElement("div", {
     onClick: () => {
       setShowEditModal(false);
       setEditDraft(null);
@@ -5558,7 +5559,7 @@ function ItemScreen({
       fontSize: 15,
       cursor: "pointer"
     }
-  }, "ביטול")))), showPickerModal && item.ideas && /*#__PURE__*/React.createElement("div", {
+  }, "ביטול")))), showPickerModal && item.ideas && ReactDOM.createPortal(/*#__PURE__*/React.createElement("div", {
     onClick: () => setShowPickerModal(false),
     style: {
       position: "fixed",
@@ -5704,7 +5705,7 @@ function ItemScreen({
       cursor: "pointer",
       boxShadow: "0 4px 14px rgba(128,0,64,0.45)"
     }
-  }, "🎲 תרחיש רנדומלי")))), /*#__PURE__*/React.createElement("div", {
+  }, "🎲 תרחיש רנדומלי")))), document.getElementById('modal-root')), /*#__PURE__*/React.createElement("div", {
     style: {
       position: "relative"
     }
