@@ -5045,9 +5045,9 @@ function ItemScreen({
   React.useEffect(() => {
     fetch('roleplay.json').then(r => r.json()).then(setRoleplayData).catch(() => {});
   }, []);
+  React.useEffect(() => { slideIdxRef.current = slideIdx; }, [slideIdx]);
   React.useEffect(() => {
     setSlideIdx(0);
-    slideIdxRef.current = 0;
   }, [showIdeaModal, pickedSession]);
   React.useEffect(() => {
     if (!showIdeaModal || pickedSession.length <= 1) return;
@@ -5058,7 +5058,6 @@ function ItemScreen({
       const delay = (idx === 0 || idx === last) ? 3000 : 2000;
       t = setTimeout(() => {
         const next = (idx + 1) % pickedSession.length;
-        slideIdxRef.current = next;
         setSlideIdx(next);
         schedule(next);
       }, delay);
