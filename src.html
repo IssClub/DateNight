@@ -4941,6 +4941,8 @@ function ItemScreen({
   const [pickedSession, setPickedSession] = useState([]);
   const [pickedSessionIdx, setPickedSessionIdx] = useState(0);
   const [slideIdx, setSlideIdx] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [captionExpanded, setCaptionExpanded] = useState(false);
   const [showIdeaModal, setShowIdeaModal] = useState(false);
   const [rpMeta, setRpMeta] = useState({});
   const [editToast, setEditToast] = useState(false);
@@ -4958,6 +4960,7 @@ function ItemScreen({
   }, []);
   React.useEffect(() => {
     if (!showIdeaModal || pickedSession.length <= 1) { setSlideIdx(0); return; }
+    if (paused) return;
     setSlideIdx(0);
     let t;
     const schedule = (idx) => {
@@ -4971,7 +4974,7 @@ function ItemScreen({
     };
     schedule(0);
     return () => clearTimeout(t);
-  }, [showIdeaModal, pickedSession]);
+  }, [showIdeaModal, pickedSession, paused]);
   const getEffIdea = (idea, sIdx = 0) => {
     try {
       const metaArr = rpMeta[idea.id];
@@ -5045,9 +5048,12 @@ function ItemScreen({
     item: item,
     onClose: () => setShowPinModal(false)
   }), showIdeaModal && pickedIdea && /*#__PURE__*/React.createElement("div", {
-    onClick: () => setShowIdeaModal(false),
+    onClick: () => { setShowIdeaModal(false); setPaused(false); setCaptionExpanded(false); },
     style: { position: "fixed", inset: 0, zIndex: 10001, background: "#000", display: "flex", flexDirection: "column" }
-  }, pickedSession.length > 0 && /*#__PURE__*/React.createElement("img", {
+  }, pickedSession.length > 1 && /*#__PURE__*/React.createElement("button", {
+    onClick: e => { e.stopPropagation(); setPaused(p => !p); },
+    style: { position: "absolute", top: 16, right: 16, zIndex: 2, background: "rgba(0,0,0,0.55)", border: "none", borderRadius: "50%", width: 42, height: 42, color: "#fff", fontSize: 20, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }
+  }, paused ? "▶" : "⏸"), pickedSession.length > 0 && /*#__PURE__*/React.createElement("img", {
     src: pickedSession[slideIdx], alt: "",
     style: { flex: 1, width: "100%", objectFit: "contain", display: "block", minHeight: 0 }
   }), pickedSession.length === 0 && /*#__PURE__*/React.createElement("div", {
@@ -5059,7 +5065,7 @@ function ItemScreen({
     style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }
   }, /*#__PURE__*/React.createElement("div", {
     style: { fontSize: 17, fontWeight: "bold", color: "#fff" }
-  }, getEffIdea(pickedIdea, pickedSessionIdx).text.slice(3)), /*#__PURE__*/React.createElement("button", {
+  }, getEffIdea(pickedIdea, pickedSessionIdx).text.replace(/^[^א-תיִ-פֿ]+/, '')), /*#__PURE__*/React.createElement("button", {
     onClick: () => {
       const url = new URL(`rp-edit.html?s=${pickedIdea.id}&n=${pickedSessionIdx}`, location.href).href;
       navigator.clipboard.writeText(url).catch(() => {});
@@ -5073,8 +5079,12 @@ function ItemScreen({
   }, "🔗 לינק הועתק"), /*#__PURE__*/React.createElement("div", {
     style: { fontSize: 13, color: "#888", marginBottom: 8, lineHeight: 1.6 }
   }, "👗 ", getEffIdea(pickedIdea, pickedSessionIdx).outfit), /*#__PURE__*/React.createElement("div", {
-    style: { fontSize: 14, color: "#ddd", lineHeight: 1.7 }
-  }, "💋 ", getEffIdea(pickedIdea, pickedSessionIdx).scene), /*#__PURE__*/React.createElement("div", {
+    onClick: () => setCaptionExpanded(e => !e),
+    style: { fontSize: 14, color: "#ddd", lineHeight: 1.7, cursor: "pointer", ...(captionExpanded ? {} : { display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }) }
+  }, "💋 ", getEffIdea(pickedIdea, pickedSessionIdx).scene), !captionExpanded && /*#__PURE__*/React.createElement("div", {
+    onClick: () => setCaptionExpanded(true),
+    style: { color: "#888", fontSize: 12, marginTop: 4, cursor: "pointer" }
+  }, "...עוד"), /*#__PURE__*/React.createElement("div", {
     style: { marginTop: 12, textAlign: "center", fontSize: 12, color: "#555" }
   }, "לחץ מחוץ לטקסט לסגירה"))), showEditModal && editDraft && /*#__PURE__*/React.createElement("div", {
     onClick: () => { setShowEditModal(false); setEditDraft(null); },
