@@ -1,6 +1,6 @@
 @echo off
 cd /d "%~dp0"
-echo Syncing new images...
+echo Syncing roleplay images...
 git add img/roleplay/ img/GIF/
 git commit -m "sync: new images"
 if %errorlevel% neq 0 (

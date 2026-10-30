@@ -1,1 +1,9 @@
 node_modules/
+img/NEW/
+.netlify/
+fix_all.py
+fix_template.py
+fix_ui.py
+out.txt
+update_poses.py
+update_venues.py
