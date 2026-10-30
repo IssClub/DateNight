@@ -389,7 +389,7 @@ body.positions-open #positions-book-overlay {
   <div id="modal-root"></div>
 
 <script>
-const BUILD_TS = "30.10.26 16:49";
+const BUILD_TS = "30.10.26 16:50";
 const {
   useState,
   useCallback,
@@ -5584,7 +5584,7 @@ function ItemScreen({
       flexWrap: "wrap",
       marginBottom: 10
     }
-  }, [1, 2, 3, 5, 8, 10, 15, 30].map(s => {
+  }, [2, 3, 5, 8].map(s => {
     const curMs = imgDelays[pickedSession[slideIdx]] != null ? imgDelays[pickedSession[slideIdx]] : slideIdx === 0 || slideIdx === pickedSession.length - 1 ? 3000 : 2000;
     const active = Math.round(curMs / 1000) === s;
     return /*#__PURE__*/React.createElement("button", {
