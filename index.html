@@ -389,7 +389,7 @@ body.positions-open #positions-book-overlay {
   <div id="modal-root"></div>
 
 <script>
-const BUILD_TS = "30.10.26 16:33";
+const BUILD_TS = "30.10.26 16:38";
 const {
   useState,
   useCallback,
@@ -5322,7 +5322,7 @@ function ItemScreen({
   const [rpMeta, setRpMeta] = useState({});
   const [editToast, setEditToast] = useState(false);
   useEffect(() => {
-    fetch('roleplay-meta.json').then(r => r.json()).then(setRpMeta).catch(() => {});
+    fetch('roleplay-meta.json?v=' + BUILD_TS).then(r => r.json()).then(setRpMeta).catch(() => {});
   }, []);
   ;
   const [lastIdeaIdx, setLastIdeaIdx] = useState(-1);
@@ -5332,7 +5332,7 @@ function ItemScreen({
   const [showPickerModal, setShowPickerModal] = useState(false);
   const [seenPairs, setSeenPairs] = useState(new Set());
   React.useEffect(() => {
-    fetch('roleplay.json').then(r => r.json()).then(setRoleplayData).catch(() => {});
+    fetch('roleplay.json?v=' + BUILD_TS).then(r => r.json()).then(setRoleplayData).catch(() => {});
   }, []);
   React.useEffect(() => {
     slideIdxRef.current = slideIdx;
@@ -8083,7 +8083,7 @@ root.render(/*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/
 var POSES_DATA = null;
 async function loadPosesData(){
   if(POSES_DATA) return;
-  var r = await fetch('./poses-data.json');
+  var r = await fetch('./poses-data.json?v=' + (typeof BUILD_TS !== 'undefined' ? BUILD_TS : Date.now()));
   POSES_DATA = await r.json();
 }
 var GIF_DATA = null;
@@ -8092,7 +8092,7 @@ var _currentGifFile = null;
 var _currentGifCat = null;
 async function loadGifData(){
   if(GIF_DATA) return;
-  var r = await fetch('./gifs.json');
+  var r = await fetch('./gifs.json?v=' + (typeof BUILD_TS !== 'undefined' ? BUILD_TS : Date.now()));
   GIF_DATA = await r.json();
 }
 function getGifDone(){ try{ return JSON.parse(localStorage.getItem('gif_done')||'{}'); }catch(e){ return {}; } }
