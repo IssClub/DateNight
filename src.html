@@ -5036,6 +5036,8 @@ function ItemScreen({
   const [showIdeaModal, setShowIdeaModal] = useState(false);
   const [rpMeta, setRpMeta] = useState({});
   const [editToast, setEditToast] = useState(false);
+  const [imgDelays, setImgDelays] = useState(() => { try { return JSON.parse(localStorage.getItem('rpDelays') || '{}'); } catch { return {}; } });
+  const [showDelayPicker, setShowDelayPicker] = useState(false);
   useEffect(() => {
     fetch('roleplay-meta.json?v=' + BUILD_TS).then(r => r.json()).then(setRpMeta).catch(() => {});
   }, []);;
@@ -5049,6 +5051,7 @@ function ItemScreen({
     fetch('roleplay.json?v=' + BUILD_TS).then(r => r.json()).then(setRoleplayData).catch(() => {});
   }, []);
   React.useEffect(() => { slideIdxRef.current = slideIdx; }, [slideIdx]);
+  React.useEffect(() => { setShowDelayPicker(false); }, [slideIdx]);
   React.useEffect(() => {
     setSlideIdx(0);
   }, [showIdeaModal, pickedSession]);
@@ -5058,7 +5061,8 @@ function ItemScreen({
     let t;
     const schedule = (idx) => {
       const last = pickedSession.length - 1;
-      const delay = (idx === 0 || idx === last) ? 3000 : 2000;
+      const src = pickedSession[idx];
+      const delay = imgDelays[src] != null ? imgDelays[src] : ((idx === 0 || idx === last) ? 3000 : 2000);
       t = setTimeout(() => {
         const next = (idx + 1) % pickedSession.length;
         setSlideIdx(next);
@@ -5067,7 +5071,7 @@ function ItemScreen({
     };
     schedule(slideIdxRef.current);
     return () => clearTimeout(t);
-  }, [showIdeaModal, pickedSession, paused, zoomed]);
+  }, [showIdeaModal, pickedSession, paused, zoomed, imgDelays]);
   const getEffIdea = (idea, sIdx = 0) => {
     try {
       const metaArr = rpMeta[idea.id];
@@ -5076,6 +5080,11 @@ function ItemScreen({
       const s = localStorage.getItem('rp_' + idea.id + '_' + sIdx);
       return s ? Object.assign({}, base, JSON.parse(s)) : base;
     } catch(e) { return idea; }
+  };
+  const saveDelay = (src, ms) => {
+    const next = { ...imgDelays, [src]: ms };
+    setImgDelays(next);
+    try { localStorage.setItem('rpDelays', JSON.stringify(next)); } catch {}
   };
   const saveEdit = () => {
     try {
@@ -5161,7 +5170,12 @@ function ItemScreen({
     style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }
   }, /*#__PURE__*/React.createElement("div", {
     style: { fontSize: 17, fontWeight: "bold", color: "#fff" }
-  }, getEffIdea(pickedIdea, pickedSessionIdx).text.replace(/^[^א-תיִ-פֿ]+/, '')), /*#__PURE__*/React.createElement("button", {
+   }, getEffIdea(pickedIdea, pickedSessionIdx).text.replace(/^[^א-תִ-ׇיִ-פֿ]+/, '')), /*#__PURE__*/React.createElement("div", {
+    style: { display: "flex", gap: 6, alignItems: "center", flexShrink: 0 }
+  }, pickedSession.length > 1 && /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowDelayPicker(p => !p),
+    style: { background: "transparent", border: "none", color: showDelayPicker ? "#e8c98a" : "#444", fontSize: 11, padding: "4px 2px", cursor: "pointer", lineHeight: 1 }
+  }, "⏱ " + Math.round((imgDelays[pickedSession[slideIdx]] != null ? imgDelays[pickedSession[slideIdx]] : (slideIdx === 0 || slideIdx === pickedSession.length - 1 ? 3000 : 2000)) / 1000) + "s"), /*#__PURE__*/React.createElement("button", {
     onClick: () => {
       const url = new URL(`rp-edit.html?s=${pickedIdea.id}&n=${pickedSessionIdx}`, location.href).href;
       navigator.clipboard.writeText(url).catch(() => {});
@@ -5169,7 +5183,18 @@ function ItemScreen({
       setTimeout(() => setEditToast(false), 2000);
     },
     style: { background: "transparent", border: "1px solid #555", borderRadius: 8, color: "#aaa", fontSize: 14, padding: "4px 10px", cursor: "pointer", flexShrink: 0 }
-  }, "✏️")),
+  }, "✏️"))),
+  showDelayPicker && /*#__PURE__*/React.createElement("div", {
+    style: { display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 10 }
+  }, [1, 2, 3, 5, 8, 10, 15, 30].map(s => {
+    const curMs = imgDelays[pickedSession[slideIdx]] != null ? imgDelays[pickedSession[slideIdx]] : (slideIdx === 0 || slideIdx === pickedSession.length - 1 ? 3000 : 2000);
+    const active = Math.round(curMs / 1000) === s;
+    return /*#__PURE__*/React.createElement("button", {
+      key: s,
+      onClick: () => { saveDelay(pickedSession[slideIdx], s * 1000); setShowDelayPicker(false); },
+      style: { padding: "3px 10px", borderRadius: 20, fontSize: 12, cursor: "pointer", background: active ? "#e8c98a" : "transparent", color: active ? "#111" : "#888", border: "1px solid " + (active ? "#e8c98a" : "#444"), flexShrink: 0 }
+    }, s + "s");
+  })),
   editToast && React.createElement("div", {
     style: { position: "fixed", top: 60, left: "50%", transform: "translateX(-50%)", background: "#333", color: "#e8c98a", borderRadius: 10, padding: "8px 18px", fontSize: 14, zIndex: 20000, pointerEvents: "none", whiteSpace: "nowrap" }
   }, "🔗 לינק הועתק"), /*#__PURE__*/React.createElement("div", {
