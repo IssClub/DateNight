@@ -389,7 +389,7 @@ body.positions-open #positions-book-overlay {
   <div id="modal-root"></div>
 
 <script>
-const BUILD_TS = "30.10.26 16:57";
+const BUILD_TS = "30.10.26 17:03";
 const {
   useState,
   useCallback,
@@ -2189,7 +2189,15 @@ function SplashWithPin({
     setEntered(e => e.slice(0, -1));
     setError(false);
   };
-  const keys = [1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, "⌫"];
+  useEffect(() => {
+    if (phase !== "pin") return;
+    const handler = e => {
+      if (e.key >= "0" && e.key <= "9") handleDigit(e.key);else if (e.key === "Backspace") handleDelete();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [phase, entered]);
+  const keys = [1, 2, 3, 4, 5, 6, 7, 8, 9, "⌫", 0, ""];
   return /*#__PURE__*/React.createElement("div", {
     style: {
       position: "fixed",
@@ -5132,7 +5140,8 @@ function SubcatScreen({
 // Pinch-to-zoom image (two fingers), pan when zoomed, tap while zoomed resets
 function ZoomableImg({
   src,
-  onZoomChange
+  onZoomChange,
+  onError
 }) {
   const boxRef = useRef(null);
   const [view, setView] = useState({
@@ -5283,6 +5292,7 @@ function ZoomableImg({
     src: src,
     alt: "",
     draggable: false,
+    onError: onError,
     style: {
       width: "100%",
       height: "100%",
@@ -5510,7 +5520,11 @@ function ItemScreen({
     }
   }, slideIdx + 1, "/", pickedSession.length), pickedSession.length > 0 && /*#__PURE__*/React.createElement(ZoomableImg, {
     src: pickedSession[slideIdx],
-    onZoomChange: setZoomed
+    onZoomChange: setZoomed,
+    onError: () => {
+      const next = (slideIdxRef.current + 1) % pickedSession.length;
+      setSlideIdx(next);
+    }
   }), pickedSession.length === 0 && /*#__PURE__*/React.createElement("div", {
     style: {
       flex: 1,
