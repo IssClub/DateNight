@@ -39,6 +39,29 @@ img/roleplay/<scenario>/2/        → סשן 2
 GIF/<category>/                   → קטגוריית GIF
 ```
 
+## אפליקציות המשנה
+האפליקציה מכילה שלושה חלקים עיקריים באותו `src.html`:
+
+### 1. DateNight — תכנון דייט (React)
+קטגוריות: מסעדות, ברים, תיאטרון, סרטים, סטנד-אפ, בישול, סרטים בבית, משחקים, אינטימי, בוגרים, פיקניק, חוויות, הרפתקאות, קפה, ספא, סדנאות
+- `RESTAURANTS`, `BARS`, `THEATER`, `MOVIES`, `STANDUP`, `COOKING`, `HOME_MOVIES`, `HOME_SERIES`, `HOME_GAMES`, `INTIMATE`, `ADULTS`, `PICNIC_SPOTS`, `EXPERIENCE`, `ADVENTURE`, `COFFEE_CARTS`, `SPA_ITEMS`, `WORKSHOP_ITEMS`
+- Screens: `HomeScreen` → `CategoryScreen` → `SubcatScreen` → `ItemScreen`
+- תוספות: `DrinksRouletteScreen`, `FavoritesScreen`, `HistoryScreen`, `SettingsScreen`
+
+### 2. 365 Dice — ספר תנוחות (Vanilla JS)
+- מרונדר ב-`#dice-game-root` בתוך `src.html` (לא React)
+- 358+ תנוחות מ-`poses-data.json`
+- פיצ'ר GIF: "איך זה ייגמר הלילה?" — קובץ אקראי מ-`GIF/` + `gifs.json`
+- תמונות: `365/001.jpg`–`365/365.jpg`
+
+### 3. Roleplay — משחקי תפקידים (React, בתוך ItemScreen)
+- נפתח מקטגוריית "בוגרים"
+- Picker modal: בחירת תרחיש וסשן
+- Idea modal: slideshow תמונות + ZoomableImg (pinch/pan/tap-reset) + caption עם outfit + scene
+- שני ה-modals ברונדרים ב-`ReactDOM.createPortal` → `#modal-root`
+- עריכת טקסט: `rp-edit.html` (שומר ב-GitHub API עם PAT)
+- נתונים: `roleplay.json` (תמונות) + `roleplay-meta.json` (טקסטים + PAT)
+
 ## Stack
 - **React 18 UMD** — ללא build step לוגי (JSX נכתב ב-src.html עם `type="text/babel"`)
 - `React.createElement(...)` — לא JSX syntax בקוד עצמו (כי build.js מטפל בהמרה)
