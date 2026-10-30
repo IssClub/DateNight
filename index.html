@@ -9,6 +9,9 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="theme-color" content="#1a0a06" />
   <link rel="apple-touch-icon" href="icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
   <title>DateNight ❤️‍🔥</title>
 
   <!-- React 18 -->
@@ -386,7 +389,7 @@ body.positions-open #positions-book-overlay {
   <div id="modal-root"></div>
 
 <script>
-const BUILD_TS = "29.10.26 17:09";
+const BUILD_TS = "30.10.26 09:17";
 const {
   useState,
   useCallback,
@@ -5501,7 +5504,8 @@ function ItemScreen({
       padding: "16px 20px calc(16px + env(safe-area-inset-bottom, 0px))",
       direction: "rtl",
       maxHeight: "50vh",
-      overflowY: "auto"
+      overflowY: "auto",
+      fontFamily: "'Rubik', sans-serif"
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
