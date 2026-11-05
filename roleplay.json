@@ -97,6 +97,14 @@
       "img/roleplay/detective/1/09.jpg",
       "img/roleplay/detective/1/10.jpg",
       "img/roleplay/detective/1/11.jpg"
+    ],
+    [
+      "img/roleplay/detective/2/01.jpg",
+      "img/roleplay/detective/2/02.jpg",
+      "img/roleplay/detective/2/03.jpg",
+      "img/roleplay/detective/2/04.jpg",
+      "img/roleplay/detective/2/05.jpg",
+      "img/roleplay/detective/2/06.jpg"
     ]
   ],
   "flight": [
@@ -328,7 +336,6 @@
     [
       "img/roleplay/stripper/1/001.png",
       "img/roleplay/stripper/1/002.png",
-      "img/roleplay/stripper/1/003.png",
       "img/roleplay/stripper/1/004.png",
       "img/roleplay/stripper/1/005.png",
       "img/roleplay/stripper/1/006.png",
@@ -339,7 +346,8 @@
       "img/roleplay/stripper/1/011.png",
       "img/roleplay/stripper/1/012.png",
       "img/roleplay/stripper/1/013.png",
-      "img/roleplay/stripper/1/014.png"
+      "img/roleplay/stripper/1/014.png",
+      "img/roleplay/stripper/1/03.png"
     ]
   ],
   "teacher": [
