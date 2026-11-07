@@ -333,10 +333,11 @@
   ],
   "seducer": [
     [
-      "img/roleplay/seducer/1/01.jpg",
+      "img/roleplay/seducer/1/01.png",
       "img/roleplay/seducer/1/02.jpg",
       "img/roleplay/seducer/1/03.jpg",
-      "img/roleplay/seducer/1/04.jpg"
+      "img/roleplay/seducer/1/04.jpg",
+      "img/roleplay/seducer/1/05.jpg"
     ],
     [
       "img/roleplay/seducer/2/01.png",
@@ -432,6 +433,24 @@
       "img/roleplay/teacher/2/09.jpg",
       "img/roleplay/teacher/2/10.jpg",
       "img/roleplay/teacher/2/11.jpg"
+    ]
+  ],
+  "therapist": [
+    [
+      "img/roleplay/therapist/1/01.png",
+      "img/roleplay/therapist/1/02.png",
+      "img/roleplay/therapist/1/03.png",
+      "img/roleplay/therapist/1/04.png",
+      "img/roleplay/therapist/1/05.png",
+      "img/roleplay/therapist/1/06.png",
+      "img/roleplay/therapist/1/07.png",
+      "img/roleplay/therapist/1/08.png",
+      "img/roleplay/therapist/1/09.png",
+      "img/roleplay/therapist/1/10.png",
+      "img/roleplay/therapist/1/11.png",
+      "img/roleplay/therapist/1/12.png",
+      "img/roleplay/therapist/1/13.png",
+      "img/roleplay/therapist/1/14.png"
     ]
   ],
   "voyeur": [
