@@ -290,14 +290,21 @@
       "img/roleplay/nurse/4/06.jpg"
     ]
   ],
+  "phone": [
+    [
+      "img/roleplay/phone/1/01.jpg",
+      "img/roleplay/phone/1/02.jpg",
+      "img/roleplay/phone/1/03.jpg",
+      "img/roleplay/phone/1/04.jpg",
+      "img/roleplay/phone/1/05.jpg",
+      "img/roleplay/phone/1/06.jpg",
+      "img/roleplay/phone/1/07.jpg",
+      "img/roleplay/phone/1/08.jpg"
+    ]
+  ],
   "pizza": [
     [
       "img/roleplay/pizza/1/01.jpg",
-      "img/roleplay/pizza/1/010.jpg",
-      "img/roleplay/pizza/1/011.jpg",
-      "img/roleplay/pizza/1/012.jpg",
-      "img/roleplay/pizza/1/013.jpg",
-      "img/roleplay/pizza/1/014.jpg",
       "img/roleplay/pizza/1/02.jpg",
       "img/roleplay/pizza/1/03.jpg",
       "img/roleplay/pizza/1/04.jpg",
@@ -305,7 +312,12 @@
       "img/roleplay/pizza/1/06.jpg",
       "img/roleplay/pizza/1/07.jpg",
       "img/roleplay/pizza/1/08.jpg",
-      "img/roleplay/pizza/1/09.jpg"
+      "img/roleplay/pizza/1/09.jpg",
+      "img/roleplay/pizza/1/10.jpg",
+      "img/roleplay/pizza/1/11.jpg",
+      "img/roleplay/pizza/1/12.jpg",
+      "img/roleplay/pizza/1/13.jpg",
+      "img/roleplay/pizza/1/14.jpg"
     ]
   ],
   "repairman": [
