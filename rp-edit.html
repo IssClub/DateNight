@@ -188,9 +188,10 @@ async function init() {
   document.getElementById('sub-label').textContent = `${scenarioId} / סשן ${sessionIdx + 1}`;
 
   try {
-    const base = location.href.replace(/[^/]+(\?.*)?$/, '');
-    const res = await fetch(base + 'roleplay-meta.json?_=' + Date.now());
-    currentMeta = await res.json();
+    const apiRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`);
+    const apiInfo = await apiRes.json();
+    currentSha = apiInfo.sha;
+    currentMeta = JSON.parse(decodeURIComponent(escape(atob(apiInfo.content.replace(/\n/g, '')))));
     if (currentMeta._token && !getPat()) {
       try { localStorage.setItem(PAT_KEY, currentMeta._token); } catch {}
       document.getElementById('pat-box').style.display = 'none';
