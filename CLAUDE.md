@@ -58,9 +58,12 @@ GIF/<category>/                   → קטגוריית GIF
 - נפתח מקטגוריית "בוגרים"
 - Picker modal: בחירת תרחיש וסשן
 - Idea modal: slideshow תמונות + ZoomableImg (pinch/pan/tap-reset) + caption עם outfit + scene
+- ניווט ידני: חצי ← → שקופים בצדי התמונה — לחיצה עוצרת את ה-slideshow
+- עיכוב לתמונה: כפתור ⏱ לכל תמונה, נשמר ב-localStorage (2/3/5/8 שניות)
 - שני ה-modals ברונדרים ב-`ReactDOM.createPortal` → `#modal-root`
 - עריכת טקסט: `rp-edit.html` (שומר ב-GitHub API עם PAT)
 - נתונים: `roleplay.json` (תמונות) + `roleplay-meta.json` (טקסטים + PAT)
+- תמונה שבורה: `onError` ב-ZoomableImg → מדלג אוטומטית לתמונה הבאה
 
 ## Stack
 - **React 18 UMD** — ללא build step לוגי (JSX נכתב ב-src.html עם `type="text/babel"`)
@@ -76,7 +79,9 @@ GIF/<category>/                   → קטגוריית GIF
 ## קבצי עריכה
 - `rp-edit.html` — עריכת תרחישי roleplay. שומר ב-GitHub דרך PAT.
   - encoding: `btoa(unescape(encodeURIComponent(...)))` / `decodeURIComponent(escape(atob(...)))`
-  - PAT מאוחסן ב-`roleplay-meta.json` תחת מפתח `_token`
+  - PAT מאוחסן ב-`roleplay-meta.json` תחת מפתח `_token` (מסונכרן לכל מכשיר)
+  - טוען `roleplay-meta.json` דרך **GitHub API** (לא CDN) — תמיד עדכני
+  - **לא לדחוף `roleplay-meta.json` מהטרמינל** — ידרוס עריכות ו-token שנשמרו דרך rp-edit.html
 
 ## Hebrew encoding
 תמיד להשתמש ב:
@@ -85,10 +90,18 @@ GIF/<category>/                   → קטגוריית GIF
 
 לא `btoa(str)` ישירות — יגרום לגיבריש בעברית.
 
+## הוספת תרחיש roleplay חדש
+1. צור תיקייה `img/roleplay/<id>/1/` עם תמונות
+2. הוסף הגדרה ב-`src.html` ברשימת ה-ideas (id, text, photoKey, outfit, scene)
+   - `photoKey` חייב להתאים לשם התיקייה בדיוק
+3. הרץ `sync-images.bat` — יסנכרן תמונות + יבנה + ידחוף
+
 ## Git
 - Branch: `main`
 - Commit attribution: `Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>`
 - לא לעשות push של קבצים לא רלוונטיים (`.netlify/`, `fix_*.py`, `out.txt`, `img/NEW/`)
+- **לא לעשות commit ל-`roleplay-meta.json` מהטרמינל** — מנוהל רק ע"י rp-edit.html
+- אם יש conflict ב-`roleplay-meta.json` — תמיד לקחת את גרסת ה-remote (`--theirs`)
 
 ## העדפות עבודה
 - לערוך `src.html` → `node build.js` → commit `src.html + index.html`
