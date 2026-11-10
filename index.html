@@ -389,7 +389,7 @@ body.positions-open #positions-book-overlay {
   <div id="modal-root"></div>
 
 <script>
-const BUILD_TS = "10.11.26 09:36";
+const BUILD_TS = "10.11.26 09:45";
 const {
   useState,
   useCallback,
@@ -5395,6 +5395,11 @@ function ItemScreen({
       return idea;
     }
   };
+  const navSlide = dir => {
+    const next = (slideIdxRef.current + dir + pickedSession.length) % pickedSession.length;
+    setSlideIdx(next);
+    setPaused(true);
+  };
   const saveDelay = (src, ms) => {
     const next = {
       ...imgDelays,
@@ -5524,14 +5529,69 @@ function ItemScreen({
       padding: "2px 8px",
       pointerEvents: "none"
     }
-  }, slideIdx + 1, "/", pickedSession.length), pickedSession.length > 0 && /*#__PURE__*/React.createElement(ZoomableImg, {
+  }, slideIdx + 1, "/", pickedSession.length), pickedSession.length > 0 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: "relative",
+      flex: 1,
+      minHeight: 0,
+      display: "flex"
+    }
+  }, /*#__PURE__*/React.createElement(ZoomableImg, {
     src: pickedSession[slideIdx],
     onZoomChange: setZoomed,
     onError: () => {
       const next = (slideIdxRef.current + 1) % pickedSession.length;
       setSlideIdx(next);
     }
-  }), pickedSession.length === 0 && /*#__PURE__*/React.createElement("div", {
+  }), pickedSession.length > 1 && /*#__PURE__*/React.createElement("button", {
+    onClick: e => {
+      e.stopPropagation();
+      navSlide(-1);
+    },
+    style: {
+      position: "absolute",
+      left: 8,
+      top: "50%",
+      transform: "translateY(-50%)",
+      background: "rgba(0,0,0,0.35)",
+      border: "none",
+      borderRadius: "50%",
+      width: 44,
+      height: 44,
+      fontSize: 20,
+      color: "#fff",
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 10,
+      touchAction: "manipulation"
+    }
+  }, "‹"), pickedSession.length > 1 && /*#__PURE__*/React.createElement("button", {
+    onClick: e => {
+      e.stopPropagation();
+      navSlide(1);
+    },
+    style: {
+      position: "absolute",
+      right: 8,
+      top: "50%",
+      transform: "translateY(-50%)",
+      background: "rgba(0,0,0,0.35)",
+      border: "none",
+      borderRadius: "50%",
+      width: 44,
+      height: 44,
+      fontSize: 20,
+      color: "#fff",
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 10,
+      touchAction: "manipulation"
+    }
+  }, "›")), pickedSession.length === 0 && /*#__PURE__*/React.createElement("div", {
     style: {
       flex: 1,
       display: "flex",

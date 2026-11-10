@@ -5093,6 +5093,7 @@ function ItemScreen({
       return s ? Object.assign({}, base, JSON.parse(s)) : base;
     } catch(e) { return idea; }
   };
+  const navSlide = (dir) => { const next = (slideIdxRef.current + dir + pickedSession.length) % pickedSession.length; setSlideIdx(next); setPaused(true); };
   const saveDelay = (src, ms) => {
     const next = { ...imgDelays, [src]: ms };
     setImgDelays(next);
@@ -5170,10 +5171,11 @@ function ItemScreen({
     style: { position: "absolute", top: "calc(env(safe-area-inset-top, 0px) + 12px)", right: 16, zIndex: 2, background: "rgba(0,0,0,0.6)", border: "1px solid rgba(255,255,255,0.35)", borderRadius: "50%", width: 48, height: 48, color: "#fff", fontSize: 22, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }
   }, paused || zoomed ? "▶" : "⏸"), pickedSession.length > 1 && /*#__PURE__*/React.createElement("div", {
     style: { position: "absolute", top: "calc(env(safe-area-inset-top, 0px) + 26px)", left: 16, zIndex: 2, color: "rgba(255,255,255,0.8)", fontSize: 13, background: "rgba(0,0,0,0.5)", borderRadius: 10, padding: "2px 8px", pointerEvents: "none" }
-  }, slideIdx + 1, "/", pickedSession.length), pickedSession.length > 0 && /*#__PURE__*/React.createElement(ZoomableImg, {
-    src: pickedSession[slideIdx],
-    onZoomChange: setZoomed, onError: () => { const next = (slideIdxRef.current + 1) % pickedSession.length; setSlideIdx(next); }
-  }), pickedSession.length === 0 && /*#__PURE__*/React.createElement("div", {
+  }, slideIdx + 1, "/", pickedSession.length), pickedSession.length > 0 && /*#__PURE__*/React.createElement("div", { style: { position: "relative", flex: 1, minHeight: 0, display: "flex" } },
+    /*#__PURE__*/React.createElement(ZoomableImg, { src: pickedSession[slideIdx], onZoomChange: setZoomed, onError: () => { const next = (slideIdxRef.current + 1) % pickedSession.length; setSlideIdx(next); } }),
+    pickedSession.length > 1 && /*#__PURE__*/React.createElement("button", { onClick: e => { e.stopPropagation(); navSlide(-1); }, style: { position: "absolute", left: 8, top: "50%", transform: "translateY(-50%)", background: "rgba(0,0,0,0.35)", border: "none", borderRadius: "50%", width: 44, height: 44, fontSize: 20, color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10, touchAction: "manipulation" } }, "‹"),
+    pickedSession.length > 1 && /*#__PURE__*/React.createElement("button", { onClick: e => { e.stopPropagation(); navSlide(1); }, style: { position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", background: "rgba(0,0,0,0.35)", border: "none", borderRadius: "50%", width: 44, height: 44, fontSize: 20, color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10, touchAction: "manipulation" } }, "›")
+  ), pickedSession.length === 0 && /*#__PURE__*/React.createElement("div", {
     style: { flex: 1, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 80 }
   }, pickedIdea.text.slice(0, 2)), /*#__PURE__*/React.createElement("div", {
     onClick: e => e.stopPropagation(),
