@@ -389,7 +389,7 @@ body.positions-open #positions-book-overlay {
   <div id="modal-root"></div>
 
 <script>
-const BUILD_TS = "10.11.26 09:45";
+const BUILD_TS = "10.11.26 09:51";
 const {
   useState,
   useCallback,
@@ -5553,21 +5553,22 @@ function ItemScreen({
       left: 8,
       top: "50%",
       transform: "translateY(-50%)",
-      background: "rgba(0,0,0,0.35)",
-      border: "none",
+      background: "rgba(255,255,255,0.09)",
+      border: "1px solid rgba(255,255,255,0.15)",
       borderRadius: "50%",
-      width: 44,
-      height: 44,
-      fontSize: 20,
-      color: "#fff",
+      width: 40,
+      height: 40,
+      fontSize: 18,
+      color: "rgba(255,255,255,0.75)",
       cursor: "pointer",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       zIndex: 10,
-      touchAction: "manipulation"
+      touchAction: "manipulation",
+      backdropFilter: "blur(6px)"
     }
-  }, "‹"), pickedSession.length > 1 && /*#__PURE__*/React.createElement("button", {
+  }, "←"), pickedSession.length > 1 && /*#__PURE__*/React.createElement("button", {
     onClick: e => {
       e.stopPropagation();
       navSlide(1);
@@ -5577,21 +5578,22 @@ function ItemScreen({
       right: 8,
       top: "50%",
       transform: "translateY(-50%)",
-      background: "rgba(0,0,0,0.35)",
-      border: "none",
+      background: "rgba(255,255,255,0.09)",
+      border: "1px solid rgba(255,255,255,0.15)",
       borderRadius: "50%",
-      width: 44,
-      height: 44,
-      fontSize: 20,
-      color: "#fff",
+      width: 40,
+      height: 40,
+      fontSize: 18,
+      color: "rgba(255,255,255,0.75)",
       cursor: "pointer",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       zIndex: 10,
-      touchAction: "manipulation"
+      touchAction: "manipulation",
+      backdropFilter: "blur(6px)"
     }
-  }, "›")), pickedSession.length === 0 && /*#__PURE__*/React.createElement("div", {
+  }, "→")), pickedSession.length === 0 && /*#__PURE__*/React.createElement("div", {
     style: {
       flex: 1,
       display: "flex",
