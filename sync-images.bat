@@ -9,6 +9,7 @@ if %errorlevel% neq 0 (
   pause
   exit /b 0
 )
+git pull --rebase
 git push
 echo.
 echo Done! Images are live.
